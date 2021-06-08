@@ -35,6 +35,10 @@ module.exports = {
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'linebreak-style': 'off',
+    'max-len': 'off',
+    'import/prefer-default-export': 'off',
+    'no-param-reassign': ['error', { props: false }],
+    'react/jsx-props-no-spreading': 'off',
   },
   settings: {
     'import/resolver': {
