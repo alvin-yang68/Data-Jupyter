@@ -4,15 +4,17 @@ import { Cell } from '../entities';
 import { performFetchDataset } from './notebook';
 
 export type EditorState = {
-  editor: Cell[];
+  cells: Cell[];
   editorMaxId: number;
   selectedCellId: number | null;
+  executionCounter: number;
 }
 
 const initialState: EditorState = {
-  editor: [],
+  cells: [],
   editorMaxId: 0,
   selectedCellId: null,
+  executionCounter: 0,
 };
 
 export const editorSlice = createSlice({
@@ -25,12 +27,18 @@ export const editorSlice = createSlice({
     cellSelected: (state: EditorState, action: PayloadAction<number>) => {
       state.selectedCellId = action.payload;
     },
+    cellRan: (state: EditorState, action: PayloadAction<number>) => {
+      state.executionCounter += 1;
+      const targetCell = state.cells.find((cell) => cell.id === action.payload);
+      if (targetCell) targetCell.runOrder = state.executionCounter;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(performFetchDataset.fulfilled, (state, action) => {
-      state.editor = [{
+      state.cells = [{
         id: 1,
         editor: '',
+        runOrder: null,
         data: action.payload.data,
       }];
       state.editorMaxId = 1;

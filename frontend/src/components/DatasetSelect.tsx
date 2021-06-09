@@ -41,7 +41,7 @@ function DatasetSelect(): React.ReactElement {
       </label>
       {errors.dataset && <span className="py-2 text-red-500">Please choose a dataset</span>}
       {loadError && <span className="py-2 text-red-500">{loadError}</span>}
-      <button type="submit" className="rounded my-4 px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white">
+      <button type="submit" className="button-relief">
         {loading && (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 inline-block animate-spin transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
