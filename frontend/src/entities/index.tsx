@@ -1,11 +1,11 @@
-export type Data = {
-  dataRaw: string;
-  dataTable: string;
+export interface DataEntity {
+  raw: string;
+  html: string;
+  console: string;
 }
 
-export type Cell = {
+export interface CellEntity {
   id: number;
-  runOrder: number | null;
-  editor: string;
-  data: Data;
+  execStatus: number | string;
+  editorContent: string;
 }

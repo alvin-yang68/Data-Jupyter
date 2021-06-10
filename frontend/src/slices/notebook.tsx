@@ -1,24 +1,29 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { fetchDataset } from '../api/dataset';
+import { DataEntity } from '../entities';
+import { updateBrowser } from '../api/dataset';
+import { performRunCell, performRunAllCells } from './editor';
 
 export type NotebookState = {
   loading: boolean;
   error: string | null;
-  sessionState: string | null;
+  selectedDataset: string | null;
+  results: DataEntity | null;
 }
 
 const initialState: NotebookState = {
   loading: false,
   error: null,
-  sessionState: null,
+  selectedDataset: null,
+  results: null,
 };
 
-export const performFetchDataset = createAsyncThunk(
-  'notebook/fetchDataset',
-  async (datasetName: string, { rejectWithValue }) => {
+export const performSelectDataset = createAsyncThunk(
+  'notebook/selectDataset',
+  async (selectedDataset: string, { rejectWithValue }) => {
     try {
-      return await fetchDataset(datasetName);
+      const results = await updateBrowser(selectedDataset, '');
+      return { ...results, selectedDataset };
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
@@ -28,22 +33,62 @@ export const performFetchDataset = createAsyncThunk(
 export const notebookSlice = createSlice({
   name: 'notebook',
   initialState,
-  reducers: {},
+  reducers: {
+    selectDataset: (state: NotebookState, { payload }: PayloadAction<string>) => {
+      state.selectedDataset = payload;
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(performFetchDataset.pending, (state) => {
+    builder.addCase(performSelectDataset.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
 
-    builder.addCase(performFetchDataset.fulfilled, (state, action) => {
-      state.loading = true;
+    builder.addCase(performSelectDataset.fulfilled, (state, action) => {
+      const { selectedDataset, ...results } = action.payload;
+      state.selectedDataset = selectedDataset;
+      state.results = results;
+      state.loading = false;
       state.error = null;
-      state.sessionState = action.payload.sessionState;
     });
 
-    builder.addCase(performFetchDataset.rejected, (state, action) => {
+    builder.addCase(performSelectDataset.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || null;
+    });
+
+    builder.addCase(performRunCell.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(performRunCell.fulfilled, (state, action) => {
+      state.results = action.payload;
+      state.loading = false;
+      state.error = null;
+    });
+
+    builder.addCase(performRunCell.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || null;
+    });
+
+    builder.addCase(performRunAllCells.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(performRunAllCells.fulfilled, (state, action) => {
+      if (action.payload) state.results = action.payload;
+      state.loading = false;
+      state.error = null;
+    });
+
+    builder.addCase(performRunAllCells.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || null;
     });
   },
 });
+
+export const { selectDataset } = notebookSlice.actions;

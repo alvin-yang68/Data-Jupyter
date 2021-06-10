@@ -3,17 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 
 import { AppState } from '../store';
-import { performFetchDataset } from '../slices/notebook';
+import { performSelectDataset } from '../slices/notebook';
 
 function DatasetSelect(): React.ReactElement {
   const dispatch = useDispatch();
-  const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
   const loadError = useSelector<AppState, string | null>((state) => state.notebook.error);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    dispatch(performFetchDataset(data.dataset));
+    dispatch(performSelectDataset(data.dataset));
   };
 
   return (
@@ -42,11 +41,6 @@ function DatasetSelect(): React.ReactElement {
       {errors.dataset && <span className="py-2 text-red-500">Please choose a dataset</span>}
       {loadError && <span className="py-2 text-red-500">{loadError}</span>}
       <button type="submit" className="button-relief">
-        {loading && (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-3 inline-block animate-spin transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-        )}
         Load
       </button>
     </form>

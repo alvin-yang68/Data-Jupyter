@@ -39,6 +39,8 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'no-param-reassign': ['error', { props: false }],
     'react/jsx-props-no-spreading': 'off',
+    'no-restricted-syntax': 'off',
+    'no-await-in-loop': 'off',
   },
   settings: {
     'import/resolver': {
