@@ -1,6 +1,6 @@
 .vscode
 
-config.py
+# config.py
 
 .flaskenv
 
