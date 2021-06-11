@@ -9,7 +9,8 @@ mongo = PyMongo()
 
 def init_app():
     """Initialize the core application."""
-    app = Flask(__name__, instance_relative_config=False)
+    app = Flask(__name__, instance_relative_config=False,
+                static_url_path='/', static_folder='../frontend/build')
     app.config.from_object(Config)
 
     # Initialize Plugins
@@ -18,12 +19,10 @@ def init_app():
     with app.app_context():
         # Import parts of our application
         from .index import index
-        from .mongodb_cleaner import mongodb_cleaner
-        from .neo4j_cleaner import neo4j_cleaner
+        from .api_v1 import api_v1
 
         # Register Blueprints
         app.register_blueprint(index.index_bp)
-        app.register_blueprint(mongodb_cleaner.mongodb_cleaner_bp)
-        app.register_blueprint(neo4j_cleaner.neo4j_cleaner_bp)
+        app.register_blueprint(api_v1.api_v1_bp)
 
         return app
