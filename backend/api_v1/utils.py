@@ -13,37 +13,6 @@ def load_table(cursor):
     return df.to_markdown()
 
 
-# def execute_code(code, db, user_session):
-#     # Create a dictionary containing global variables allowed to be exposed to the notebook cell.
-#     session_globals = {}
-#     # session_globals = {name: eval(f'user_session.{name}') for name in dir(
-#     #     user_session) if not name.startswith('__')}
-#     for name in dir(user_session):
-#         if not name.startswith('__'):
-#             session_globals[name] = eval(f'user_session.{name}')
-
-#     # Insert `db` cursor as one of the allowed global variables.
-#     session_globals['db'] = db
-
-#     # Inject code to save any newly defined variables in the notebook cell.
-#     code += """\n_locals = {k:v for (k, v) in locals().items() if k != '__builtins__'}"""
-#     session_globals['_locals'] = {}
-
-#     # Capture any console output of the user's code.
-#     f = StringIO()
-#     with redirect_stdout(f):
-#         exec(code, session_globals)
-#     console_output = f.getvalue()
-
-#     # Update `user_session` with any newly defined variables in the notebook cell.
-#     for k, v in session_globals['_locals'].items():
-#         if k == 'db' or k == '_locals':
-#             continue
-#         if k not in dir(user_session):
-#             setattr(user_session, k, v)
-
-#     return db, console_output
-
 def execute_code(code, db, user_session):
     # Create a dictionary containing global variables allowed to be exposed to the notebook cell.
     context = {
@@ -52,10 +21,13 @@ def execute_code(code, db, user_session):
     }
 
     # Capture any console output of the user's code.
-    f = StringIO()
-    with redirect_stdout(f):
-        exec(code, context)
-    console_output = f.getvalue()
+    try:
+        f = StringIO()
+        with redirect_stdout(f):
+            exec(code, context)
+        console_output = f.getvalue()
+    except Exception as e:
+        console_output = str(e)
 
     if 'show' in context:
         filtered_db = context['show']
