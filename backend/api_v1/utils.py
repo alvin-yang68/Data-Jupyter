@@ -34,4 +34,4 @@ def execute_code(code, db, user_session):
     else:
         filtered_db = db.find()
 
-    return filtered_db, console_output
+    return list(filtered_db), console_output

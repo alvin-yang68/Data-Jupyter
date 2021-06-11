@@ -19,10 +19,9 @@ def load():
     session['user'] = jsonpickle.encode(UserSession(collection_name))
 
     db = mongo.db[collection_name]
-    db_cursor = db.find()
-    raw_data = load_raw(db_cursor)
-    db_cursor.rewind()
-    table_data = load_table(db_cursor)
+    data = list(db.find())
+    raw_data = load_raw(data)
+    table_data = load_table(data)
 
     # Flask will automatically convert dictionary to JSON.
     return {'raw': raw_data, 'table': table_data, 'console': 'Success loading dataset'}
@@ -39,11 +38,10 @@ def update():
     db = mongo.db[user_session.collection_name]
 
     # Execute the code in notebook cell and render results.
-    db_cursor, console_output = execute_code(
+    data, console_output = execute_code(
         editor_content, db, user_session)
-    raw_data = load_raw(db_cursor)
-    db_cursor.rewind()
-    table_data = load_table(db_cursor)
+    raw_data = load_raw(data)
+    table_data = load_table(data)
 
     # Save user session back to cookies.
     session['user'] = jsonpickle.encode(user_session)
