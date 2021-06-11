@@ -13,7 +13,6 @@ export interface CellEntity {
 }
 
 export type CheckpointEntity= {
-  id: string;
   editorState: EditorState;
   browserState: DataEntity;
   selectedDataset: string;

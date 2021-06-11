@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { DataEntity } from '../entities';
 import { performSelectDataset } from './notebook';
 import { performRunAllCells, performRunCell } from './editor';
+import { performLoadCheckpoint } from './checkpoint';
 
 export type BrowserState = DataEntity | null;
 
@@ -21,5 +22,7 @@ export const browserSlice = createSlice({
     builder.addCase(performRunCell.fulfilled, (state, action) => action.payload);
 
     builder.addCase(performRunAllCells.fulfilled, (state, action) => action.payload);
+
+    builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.browserState);
   },
 });

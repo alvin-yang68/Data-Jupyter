@@ -1,20 +1,13 @@
 import client from './index';
 
-import { DataEntity, CheckpointEntity, CheckpointDetailEntity } from '../entities';
-import { EditorState } from '../slices/editor';
+import { CheckpointEntity, CheckpointDetailEntity } from '../entities';
 
 export async function fetchCheckpoints(): Promise<CheckpointDetailEntity[]> {
   const response = await client.get('/api/checkpoint/');
   return response.data;
 }
 
-type CheckpointPayload = {
-  editorState: EditorState;
-  browserState: DataEntity;
-  selectedDataset: string;
-}
-
-export async function saveCheckpoint(payload: CheckpointPayload): Promise<void> {
+export async function saveCheckpoint(payload: CheckpointEntity): Promise<void> {
   const timestamp = new Date().toLocaleString();
   const response = await client.post('/api/checkpoint/', { ...payload, timestamp });
   return response.data;
