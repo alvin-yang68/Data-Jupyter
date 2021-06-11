@@ -37,7 +37,7 @@ module.exports = {
     'linebreak-style': 'off',
     'max-len': 'off',
     'import/prefer-default-export': 'off',
-    'no-param-reassign': ['error', { props: false }],
+    'no-param-reassign': 'off',
     'react/jsx-props-no-spreading': 'off',
     'no-restricted-syntax': 'off',
     'no-await-in-loop': 'off',

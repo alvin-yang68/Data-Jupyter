@@ -15,21 +15,16 @@ enum Mode {
 }
 
 function DataBrowser(): React.ReactElement {
+  const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
   const [browserMode, setBrowserMode] = useState(Mode.Raw);
   const rawData = useSelector<AppState, string>((state) => (
-    state.notebook.results
-      ? state.notebook.results.raw
-      : ''
+    state.browser ? state.browser.raw : ''
   ));
   const tableData = useSelector<AppState, string>((state) => (
-    state.notebook.results
-      ? state.notebook.results.table
-      : ''
+    state.browser ? state.browser.table : ''
   ));
   const consoleOutput = useSelector<AppState, string>((state) => (
-    state.notebook.results
-      ? state.notebook.results.console
-      : ''
+    state.browser ? state.browser.console : ''
   ));
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,10 +65,17 @@ function DataBrowser(): React.ReactElement {
       <div className="py-2">
         <h1 className="font-bold text-3xl uppercase p-4">Data Browser</h1>
       </div>
-      <div className="bg-gray-50 border border-gray-300 rounded-t-md text-left">
-        <button type="button" name={Mode.Raw} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Raw) ? 'text-blue-600' : 'text-gray-400'}`}>Raw</button>
-        <button type="button" name={Mode.Table} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Table) ? 'text-blue-600' : 'text-gray-400'}`}>Table</button>
-        <button type="button" name={Mode.Console} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Console) ? 'text-blue-600' : 'text-gray-400'}`}>Console</button>
+      <div className="flex flex-row justify-between w-full bg-gray-50 border border-gray-300 rounded-t-md">
+        <div className="text-left">
+          <button type="button" name={Mode.Raw} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Raw) ? 'text-blue-600' : 'text-gray-400'}`}>Raw</button>
+          <button type="button" name={Mode.Table} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Table) ? 'text-blue-600' : 'text-gray-400'}`}>Table</button>
+          <button type="button" name={Mode.Console} onClick={handleClick} className={`py-2 px-4 inline-block font-semibold ${(browserMode === Mode.Console) ? 'text-blue-600' : 'text-gray-400'}`}>Console</button>
+        </div>
+        {loading && (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-700 m-2 outline-none animate-spin transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        )}
       </div>
       {browserMode === Mode.Raw && codeView}
       {browserMode === Mode.Table && tableView}

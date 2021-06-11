@@ -1,21 +1,21 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { DataEntity } from '../entities';
 import { loadDataset } from '../api/dataset';
 import { performRunCell, performRunAllCells } from './editor';
+import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
 
 export type NotebookState = {
   loading: boolean;
   error: string | null;
   selectedDataset: string | null;
-  results: DataEntity | null;
+  showCheckpointModal: boolean;
 }
 
 const initialState: NotebookState = {
   loading: false,
   error: null,
   selectedDataset: null,
-  results: null,
+  showCheckpointModal: false,
 };
 
 export const performSelectDataset = createAsyncThunk(
@@ -37,6 +37,9 @@ export const notebookSlice = createSlice({
     selectDataset: (state: NotebookState, { payload }: PayloadAction<string>) => {
       state.selectedDataset = payload;
     },
+    toggleCheckpointModal: (state: NotebookState, { payload }: PayloadAction<boolean>) => {
+      state.showCheckpointModal = payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(performSelectDataset.pending, (state) => {
@@ -45,9 +48,8 @@ export const notebookSlice = createSlice({
     });
 
     builder.addCase(performSelectDataset.fulfilled, (state, action) => {
-      const { selectedDataset, ...results } = action.payload;
+      const { selectedDataset } = action.payload;
       state.selectedDataset = selectedDataset;
-      state.results = results;
       state.loading = false;
       state.error = null;
     });
@@ -62,8 +64,7 @@ export const notebookSlice = createSlice({
       state.error = null;
     });
 
-    builder.addCase(performRunCell.fulfilled, (state, action) => {
-      state.results = action.payload;
+    builder.addCase(performRunCell.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
@@ -78,8 +79,7 @@ export const notebookSlice = createSlice({
       state.error = null;
     });
 
-    builder.addCase(performRunAllCells.fulfilled, (state, action) => {
-      if (action.payload) state.results = action.payload;
+    builder.addCase(performRunAllCells.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
@@ -88,7 +88,52 @@ export const notebookSlice = createSlice({
       state.loading = false;
       state.error = action.error.message || null;
     });
+
+    builder.addCase(performFetchCheckpoints.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(performFetchCheckpoints.fulfilled, (state) => {
+      state.loading = false;
+      state.error = null;
+    });
+
+    builder.addCase(performFetchCheckpoints.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || null;
+    });
+
+    builder.addCase(performSaveCheckpoint.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(performSaveCheckpoint.fulfilled, (state) => {
+      state.loading = false;
+      state.error = null;
+    });
+
+    builder.addCase(performSaveCheckpoint.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || null;
+    });
+
+    builder.addCase(performLoadCheckpoint.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+
+    builder.addCase(performLoadCheckpoint.fulfilled, (state) => {
+      state.loading = false;
+      state.error = null;
+    });
+
+    builder.addCase(performLoadCheckpoint.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || null;
+    });
   },
 });
 
-export const { selectDataset } = notebookSlice.actions;
+export const { selectDataset, toggleCheckpointModal } = notebookSlice.actions;

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .button {
-  @apply flex flex-row items-center rounded my-4 px-3 py-2 m-1 bg-blue-700 text-white font-bold;
+  @apply flex flex-row items-center rounded my-4 px-3 py-2 m-1 text-white font-bold;
 }
 
 .button-relief {
@@ -12,6 +12,10 @@
 
 .button-empty {
   @apply flex flex-row items-center rounded my-4 px-3 py-2 m-1 border-2 shadow-lg border-blue-700 text-blue-700 font-bold focus:outline-none hover:bg-blue-700 hover:text-white;
+}
+
+.button-icon {
+  @apply h-7 w-7 text-blue-500 hover:bg-gray-200 m-2 cursor-pointer outline-none;
 }
 
 tr {

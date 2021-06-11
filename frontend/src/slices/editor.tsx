@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { updateBrowser } from '../api/dataset';
+import { updateBrowser } from '../api/browser';
 import { CellEntity, DataEntity } from '../entities';
+import { performLoadCheckpoint } from './checkpoint';
 
 export type EditorState = {
   cells: CellEntity[];
@@ -62,6 +63,12 @@ export const editorSlice = createSlice({
       const to = Math.min(Math.max(from + payload, 0), state.cells.length - 1);
       if (from > -1) state.cells.splice(to, 0, state.cells.splice(from, 1)[0]);
     },
+    loadCells: (state: EditorState, { payload }: PayloadAction<CellEntity[]>) => {
+      state.cells = payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.editorState);
   },
 });
 
@@ -72,6 +79,7 @@ export const {
   setCellStatus,
   deleteCell,
   moveCell,
+  loadCells,
 } = editorSlice.actions;
 
 export const performRunCell = createAsyncThunk(
