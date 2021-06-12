@@ -19,10 +19,10 @@ def init_app():
     with app.app_context():
         # Import parts of our application
         from .index import index
-        from .api_v1 import api_v1
+        from .api import api
 
         # Register Blueprints
         app.register_blueprint(index.index_bp)
-        app.register_blueprint(api_v1.api_v1_bp)
+        app.register_blueprint(api.api_bp)
 
         return app
