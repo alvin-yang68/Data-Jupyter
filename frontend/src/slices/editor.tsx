@@ -9,6 +9,8 @@ export type EditorState = {
   cellCounter: number;
   execCounter: number;
   focusedCellId: number | null;
+  lastExecutedCellId: number | null;
+  updateBrowserCellId: number | null;
 }
 
 const initialState: EditorState = {
@@ -16,6 +18,8 @@ const initialState: EditorState = {
   cellCounter: 0,
   execCounter: 0,
   focusedCellId: null,
+  lastExecutedCellId: null,
+  updateBrowserCellId: null,
 };
 
 export const editorSlice = createSlice({
@@ -31,7 +35,13 @@ export const editorSlice = createSlice({
     },
     addCell: (state: EditorState) => {
       state.cellCounter += 1;
-      const newCell = { id: state.cellCounter, execStatus: '', editorContent: '' };
+      const newCell = {
+        id: state.cellCounter,
+        execStatus: '',
+        errorStatus: false,
+        editorContent: '',
+        numOfLines: 0,
+      };
       if (state.focusedCellId) {
         const focusedCellIdx = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
         if (focusedCellIdx > -1) state.cells.splice(focusedCellIdx + 1, 0, newCell);
@@ -41,9 +51,12 @@ export const editorSlice = createSlice({
     },
     changeCell: (state: EditorState, { payload }: PayloadAction<string>) => {
       const index = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
-      if (index > -1) state.cells[index].editorContent = payload;
+      if (index > -1) {
+        state.cells[index].numOfLines = payload.split('\n').length;
+        state.cells[index].editorContent = payload;
+      }
     },
-    setCellStatus: (state: EditorState, { payload }: PayloadAction<{id: number, execStatus?: string }>) => {
+    setCellStatus: (state: EditorState, { payload }: PayloadAction<{id: number, execStatus?: string, errorStatus: boolean }>) => {
       let execStatus: (string | number);
       if (payload.execStatus) {
         execStatus = payload.execStatus;
@@ -52,7 +65,10 @@ export const editorSlice = createSlice({
         execStatus = state.execCounter;
       }
       const index = state.cells.findIndex((cell) => cell.id === payload.id);
-      if (index > -1) state.cells[index].execStatus = execStatus;
+      if (index > -1) {
+        state.cells[index].execStatus = execStatus;
+        state.cells[index].errorStatus = payload.errorStatus;
+      }
     },
     deleteCell: (state: EditorState) => {
       const index = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
@@ -65,6 +81,12 @@ export const editorSlice = createSlice({
     },
     loadCells: (state: EditorState, { payload }: PayloadAction<CellEntity[]>) => {
       state.cells = payload;
+    },
+    setLastExecutedCellId: (state: EditorState, { payload }: PayloadAction<number>) => {
+      state.lastExecutedCellId = payload;
+    },
+    setBrowserUpdateCellId: (state: EditorState, { payload }: PayloadAction<number>) => {
+      state.updateBrowserCellId = payload;
     },
   },
   extraReducers: (builder) => {
@@ -80,6 +102,8 @@ export const {
   deleteCell,
   moveCell,
   loadCells,
+  setLastExecutedCellId,
+  setBrowserUpdateCellId,
 } = editorSlice.actions;
 
 export const performRunCell = createAsyncThunk(
@@ -91,9 +115,11 @@ export const performRunCell = createAsyncThunk(
     if (!targetCell) return rejectWithValue('Rejected');
 
     try {
-      dispatch(setCellStatus({ id: targetCell.id, execStatus: '*' }));
-      const results = await updateBrowser(targetCell.editorContent);
-      dispatch(setCellStatus({ id: targetCell.id }));
+      dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
+      const { cellError, browserUpdated, ...results } = await updateBrowser(targetCell.editorContent);
+      dispatch(setCellStatus({ id: targetCell.id, errorStatus: cellError }));
+      dispatch(setLastExecutedCellId(targetCell.id));
+      if (browserUpdated) dispatch(setBrowserUpdateCellId(targetCell.id));
       return results;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -108,10 +134,13 @@ export const performRunAllCells = createAsyncThunk(
 
     try {
       let results: DataEntity | undefined;
-      for (const cell of editor.cells) {
-        dispatch(setCellStatus({ id: cell.id, execStatus: '*' }));
-        results = await updateBrowser(cell.editorContent);
-        dispatch(setCellStatus({ id: cell.id }));
+      for (const targetCell of editor.cells) {
+        dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
+        const { cellError, browserUpdated, ...rest } = await updateBrowser(targetCell.editorContent);
+        results = rest;
+        dispatch(setCellStatus({ id: targetCell.id, errorStatus: cellError }));
+        dispatch(setLastExecutedCellId(targetCell.id));
+        if (browserUpdated) dispatch(setBrowserUpdateCellId(targetCell.id));
       }
       return results;
     } catch (e) {

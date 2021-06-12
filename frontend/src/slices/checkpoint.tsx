@@ -8,7 +8,7 @@ import { NotebookState } from './notebook';
 
 export type CheckpointState = CheckpointDetailEntity[];
 
-const initialState: CheckpointState = [{ id: '1', timestamp: '1' }, { id: '2', timestamp: '2' }];
+const initialState: CheckpointState = [];
 
 export const performFetchCheckpoints = createAsyncThunk(
   'checkpoint/fetch',
@@ -26,7 +26,7 @@ export const performSaveCheckpoint = createAsyncThunk(
   async (_, { getState, rejectWithValue }) => {
     const { editor, notebook, browser } = getState() as {editor: EditorState, notebook: NotebookState, browser: BrowserState};
 
-    if (!notebook.selectedDataset || !browser) { return rejectWithValue('Rejected'); }
+    if (!notebook.selectedDataset || browser === null) { return rejectWithValue('Rejected'); }
 
     try {
       return await saveCheckpoint({

@@ -42,6 +42,7 @@ module.exports = {
     'no-restricted-syntax': 'off',
     'no-await-in-loop': 'off',
     'import/first': 'off',
+    'dot-notation': 'off',
   },
   settings: {
     'import/resolver': {

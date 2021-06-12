@@ -8,6 +8,7 @@ import Checkpoint from './Checkpoint';
 
 function CheckpointsList(): React.ReactElement {
   const dispatch = useDispatch();
+  const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
   const ids = useSelector<AppState, string[]>((state) => (
     state.checkpoint.map((checkpointDetail) => checkpointDetail.id)
   ));
@@ -40,7 +41,7 @@ function CheckpointsList(): React.ReactElement {
                 {ids.map((id) => <Checkpoint key={id} id={id} selectedId={selectedId} setSelectedId={setSelectedId} />)}
               </ul>
             )
-            : 'No checkpoint available'}
+            : <span className="m-4">{loading ? 'Loading...' : 'No checkpoint has been created'}</span>}
         </div>
         <div className="flex justify-end items-center w-100 border-t px-2">
           {error && <span className="px-4 py-2 text-red-500">{error}</span>}

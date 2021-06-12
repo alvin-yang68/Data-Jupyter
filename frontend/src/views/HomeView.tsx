@@ -21,7 +21,7 @@ function HomeView(): React.ReactElement {
         <div className="bg-gray-100">
           <main className="h-full container mx-auto px-4 py-4 text-center">
             <div className="pt-16">
-              <h1 className="font-bold text-3xl uppercase p-4">Choose demo dataset</h1>
+              <h1 className="font-bold text-3xl uppercase p-4">Choose a demo dataset</h1>
               <DatasetSelect />
             </div>
             <div className="grid grid-cols-2 gap-6 py-4">

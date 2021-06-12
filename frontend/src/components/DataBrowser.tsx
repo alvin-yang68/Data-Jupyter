@@ -17,15 +17,9 @@ enum Mode {
 function DataBrowser(): React.ReactElement {
   const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
   const [browserMode, setBrowserMode] = useState(Mode.Raw);
-  const rawData = useSelector<AppState, string>((state) => (
-    state.browser ? state.browser.raw : ''
-  ));
-  const tableData = useSelector<AppState, string>((state) => (
-    state.browser ? state.browser.table : ''
-  ));
-  const consoleOutput = useSelector<AppState, string>((state) => (
-    state.browser ? state.browser.console : ''
-  ));
+  const rawData = useSelector<AppState, string>((state) => (state.browser.raw));
+  const tableData = useSelector<AppState, string>((state) => (state.browser.table));
+  const consoleOutput = useSelector<AppState, string>((state) => (state.browser.console));
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

@@ -9,16 +9,18 @@ export interface DataEntity {
 export interface CellEntity {
   id: number;
   execStatus: number | string;
+  errorStatus: boolean;
   editorContent: string;
+  numOfLines: number;
 }
 
-export type CheckpointEntity= {
+export interface CheckpointEntity {
   editorState: EditorState;
   browserState: DataEntity;
   selectedDataset: string;
 }
 
-export type CheckpointDetailEntity = {
+export interface CheckpointDetailEntity {
   id: string;
   timestamp: string;
 }

@@ -5,9 +5,13 @@ import { performSelectDataset } from './notebook';
 import { performRunAllCells, performRunCell } from './editor';
 import { performLoadCheckpoint } from './checkpoint';
 
-export type BrowserState = DataEntity | null;
+export type BrowserState = DataEntity;
 
-const initialState: BrowserState = null;
+const initialState: BrowserState = {
+  raw: '',
+  table: '',
+  console: '',
+};
 
 export const browserSlice = createSlice({
   name: 'browser',
