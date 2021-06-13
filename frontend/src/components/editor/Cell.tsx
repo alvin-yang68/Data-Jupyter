@@ -33,8 +33,8 @@ function Cell({ id }: IProps): React.ReactElement {
   ));
 
   let leftBorder = '';
-  if (updateBrowserCellId && updateBrowserCellId === id) leftBorder = 'border-l-4 border-blue-500';
   if (lastExecutedCellId && lastExecutedCellId === id) leftBorder = 'border-l-4 border-green-500';
+  if (updateBrowserCellId && updateBrowserCellId === id) leftBorder = 'border-l-4 border-blue-500';
   if (errorStatus) leftBorder = 'border-l-4 border-red-500';
 
   return (
