@@ -1,12 +1,18 @@
 import { EditorState } from '../slices/editor';
+import { BrowserState } from '../slices/browser';
 
-export interface DataEntity {
-  raw: string;
-  table: string;
-  console: string;
+export interface Dataset {
+  raw?: string;
+  table?: string;
+  console?: string;
 }
 
-export interface CellEntity {
+export interface CellExecutionResult extends Dataset {
+  hasCellError: boolean;
+  shouldUpdateBrowser: boolean;
+}
+
+export interface Cell {
   id: number;
   execStatus: number | string;
   errorStatus: boolean;
@@ -14,13 +20,13 @@ export interface CellEntity {
   numOfLines: number;
 }
 
-export interface CheckpointEntity {
+export interface Checkpoint {
   editorState: EditorState;
-  browserState: DataEntity;
+  browserState: BrowserState;
   selectedDataset: string;
 }
 
-export interface CheckpointDetailEntity {
+export interface CheckpointDetail {
   id: string;
   timestamp: string;
 }

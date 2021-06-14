@@ -2,7 +2,7 @@ import React, { SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState } from '../../store';
-import { CheckpointDetailEntity } from '../../entities';
+import { CheckpointDetail } from '../../entities';
 
 interface IProps {
     id: string;
@@ -11,7 +11,7 @@ interface IProps {
 }
 
 function Checkpoint({ id, selectedId, setSelectedId }: IProps): React.ReactElement {
-  const checkpoint = useSelector<AppState, CheckpointDetailEntity | undefined>((state) => (
+  const checkpoint = useSelector<AppState, CheckpointDetail | undefined>((state) => (
     state.checkpoint.find((c) => c.id === id)
   ));
 

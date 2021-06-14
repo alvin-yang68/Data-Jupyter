@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState } from '../store';
-import DatasetSelect from '../components/DatasetSelect';
+import DatasetSelection from '../components/DatasetSelection';
 import DataBrowser from '../components/DataBrowser';
 import CellsList from '../components/editor/CellsList';
 import CheckpointsList from '../components/checkpoint/CheckpointsList';
@@ -22,7 +22,7 @@ function HomeView(): React.ReactElement {
           <main className="h-full container mx-auto px-4 py-4 text-center">
             <div className="pt-16">
               <h1 className="font-bold text-3xl uppercase p-4">Choose a demo dataset</h1>
-              <DatasetSelect />
+              <DatasetSelection />
             </div>
             <div className="grid grid-cols-2 gap-6 py-4">
               <CellsList />

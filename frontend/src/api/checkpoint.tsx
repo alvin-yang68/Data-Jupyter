@@ -1,19 +1,19 @@
 import client from './index';
 
-import { CheckpointEntity, CheckpointDetailEntity } from '../entities';
+import { Checkpoint, CheckpointDetail } from '../entities';
 
-export async function fetchCheckpoints(): Promise<CheckpointDetailEntity[]> {
+export async function fetchCheckpoints(): Promise<CheckpointDetail[]> {
   const response = await client.get('/api/checkpoint');
   return response.data;
 }
 
-export async function saveCheckpoint(payload: CheckpointEntity): Promise<void> {
+export async function saveCheckpoint(payload: Checkpoint): Promise<void> {
   const timestamp = new Date().toLocaleString();
   const response = await client.post('/api/checkpoint', { ...payload, timestamp });
   return response.data;
 }
 
-export async function loadCheckpoint(id: string): Promise<CheckpointEntity> {
+export async function loadCheckpoint(id: string): Promise<Checkpoint> {
   const response = await client.get(`/api/checkpoint/${id}`);
   return response.data;
 }

@@ -3,16 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 
 import { AppState } from '../store';
-import { performSelectDataset } from '../slices/notebook';
+import { selectDataset, performLoadDataset } from '../slices/notebook';
 
-function DatasetSelect(): React.ReactElement {
+function DatasetSelection(): React.ReactElement {
   const dispatch = useDispatch();
   const loadError = useSelector<AppState, string | null>((state) => state.notebook.error);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    dispatch(performSelectDataset(data.dataset));
+    dispatch(selectDataset(data.dataset));
+    dispatch(performLoadDataset());
   };
 
   return (
@@ -47,4 +48,4 @@ function DatasetSelect(): React.ReactElement {
   );
 }
 
-export default DatasetSelect;
+export default DatasetSelection;

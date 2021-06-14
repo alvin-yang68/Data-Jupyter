@@ -18,12 +18,12 @@ const initialState: NotebookState = {
   showCheckpointModal: false,
 };
 
-export const performSelectDataset = createAsyncThunk(
-  'notebook/selectDataset',
-  async (selectedDataset: string, { rejectWithValue }) => {
+export const performLoadDataset = createAsyncThunk(
+  'notebook/loadDataset',
+  async (_, { getState, rejectWithValue }) => {
     try {
-      const results = await loadDataset(selectedDataset);
-      return { ...results, selectedDataset };
+      const { notebook: { selectedDataset } } = getState() as {notebook: {selectedDataset: string}};
+      return loadDataset(selectedDataset);
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
@@ -42,19 +42,17 @@ export const notebookSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(performSelectDataset.pending, (state) => {
+    builder.addCase(performLoadDataset.pending, (state) => {
       state.loading = true;
       state.error = null;
     });
 
-    builder.addCase(performSelectDataset.fulfilled, (state, action) => {
-      const { selectedDataset } = action.payload;
-      state.selectedDataset = selectedDataset;
+    builder.addCase(performLoadDataset.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
 
-    builder.addCase(performSelectDataset.rejected, (state, action) => {
+    builder.addCase(performLoadDataset.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || null;
     });
