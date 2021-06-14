@@ -13,8 +13,8 @@ from .utils import load_raw, load_table, listify_with_str_oid
 api_bp = Blueprint('api_bp', __name__)
 
 
-@api_bp.route('/api/dataset/<collection_name>', methods=['GET', 'POST'])
-def load(collection_name):
+@api_bp.route('/api/dataset/<collection_name>', methods=['GET'])
+def dataset(collection_name):
     # Store user session to cookies.
     session['editor'] = jsonpickle.encode(EditorSession(collection_name))
 
@@ -33,6 +33,15 @@ def browser():
     request_data = request.get_json()
     editor_content = request_data['editorContent']
 
+    # Prepare the default response.
+    response = {
+        'raw': None,
+        'table': None,
+        'console': None,
+        'hasCellError': False,
+        'shouldUpdateBrowser': False,
+    }
+
     if 'editor' not in session:
         abort(404)
     editor_session = jsonpickle.decode(session['editor'])
@@ -45,51 +54,37 @@ def browser():
     }
 
     editor_session_prev_state = deepcopy(editor_session)
-    cell_error = False
+    response['hasCellError'] = False
 
     # Execute the code in notebook cell and capture any console output.
     try:
         f = StringIO()
         with redirect_stdout(f):
             exec(editor_content, context)
-        console_output = f.getvalue()
+        response['console'] = f.getvalue()
     except Exception as e:
-        console_output = str(e)
-        cell_error = True
+        response['console'] = str(e)
+        response['hasCellError'] = True
 
     # Check if any variables/functions in `store` had been modified.
     for name in vars(editor_session_prev_state):
         if vars(editor_session_prev_state)[name] != vars(editor_session)[name]:
-            console_output = f'Error: Store fields should not be mutated once initialized.'
-            cell_error = True
+            response['console'] = f'Error: Store fields should not be mutated once initialized.'
+            response['hasCellError'] = True
             editor_session = editor_session_prev_state
             break
 
     # Update browser's data if the user asked for it.
     if 'show' in context:
         data = list(context['show'])
-        raw_data = load_raw(data)
-        table_data = load_table(data)
-        session['browser'] = {
-            'raw_data': raw_data,
-            'table_data': table_data,
-        }
-        browser_updated = True
-    else:
-        raw_data = session['browser']['raw_data']
-        table_data = session['browser']['table_data']
-        browser_updated = False
+        response['raw'] = load_raw(data)
+        response['table'] = load_table(data)
+        response['shouldUpdateBrowser'] = True
 
     # Save editor session back to cookies.
     session['editor'] = jsonpickle.encode(editor_session)
 
-    return {
-        'raw': raw_data,
-        'table': table_data,
-        'console': console_output,
-        'cellError': cell_error,
-        'browserUpdated': browser_updated,
-    }
+    return response
 
 
 @api_bp.route('/api/checkpoint', methods=['GET', 'POST'])
