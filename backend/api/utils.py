@@ -11,7 +11,7 @@ def load_table(cursor):
     return df.to_markdown()
 
 
-def listify_with_str_oid(cursor):
+def listify_cursor(cursor):
     docs = []
     for doc in cursor:
         doc['id'] = str(doc['_id'])
