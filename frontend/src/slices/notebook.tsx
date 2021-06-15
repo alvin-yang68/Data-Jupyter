@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { loadDataset } from '../api/dataset';
 import { performRunCell, performRunAllCells } from './editor';
 import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
 
@@ -18,18 +17,6 @@ const initialState: NotebookState = {
   showCheckpointModal: false,
 };
 
-export const performLoadDataset = createAsyncThunk(
-  'notebook/loadDataset',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const { notebook: { selectedDataset } } = getState() as {notebook: {selectedDataset: string}};
-      return loadDataset(selectedDataset);
-    } catch (e) {
-      return rejectWithValue(e.response.data);
-    }
-  },
-);
-
 export const notebookSlice = createSlice({
   name: 'notebook',
   initialState,
@@ -42,21 +29,6 @@ export const notebookSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(performLoadDataset.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-
-    builder.addCase(performLoadDataset.fulfilled, (state) => {
-      state.loading = false;
-      state.error = null;
-    });
-
-    builder.addCase(performLoadDataset.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
-
     builder.addCase(performRunCell.pending, (state) => {
       state.loading = true;
       state.error = null;

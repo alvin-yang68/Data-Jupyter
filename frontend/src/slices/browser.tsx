@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { performLoadDataset } from './notebook';
 import { performRunAllCells, performRunCell } from './editor';
 import { performLoadCheckpoint } from './checkpoint';
 
@@ -21,8 +20,6 @@ export const browserSlice = createSlice({
   initialState: initialState as BrowserState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(performLoadDataset.fulfilled, (state, action) => ({ ...state, ...action.payload }));
-
     builder.addCase(performRunCell.fulfilled, (state, action) => ({ ...state, ...action.payload }));
 
     builder.addCase(performRunAllCells.fulfilled, (state, action) => ({ ...state, ...action.payload }));

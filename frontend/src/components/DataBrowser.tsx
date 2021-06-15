@@ -16,6 +16,8 @@ enum Mode {
 
 function DataBrowser(): React.ReactElement {
   const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
+  const error = useSelector<AppState, string | null>((state) => state.notebook.error);
+
   const [browserMode, setBrowserMode] = useState(Mode.Raw);
   const rawData = useSelector<AppState, string>((state) => (state.browser.raw));
   const tableData = useSelector<AppState, string>((state) => (state.browser.table));
@@ -50,6 +52,7 @@ function DataBrowser(): React.ReactElement {
 
   const consoleView = (
     <div className="px-4 w-full h-80vh bg-gray-50 border border-gray-300 block rounded-md text-left overflow-scroll">
+      {error && <span className="py-2 text-red-500">{error}</span>}
       <span className="font-mono">{consoleOutput}</span>
     </div>
   );

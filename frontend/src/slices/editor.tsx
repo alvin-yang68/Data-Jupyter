@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { updateBrowser } from '../api/browser';
 import { Cell } from '../entities';
 import { performLoadCheckpoint } from './checkpoint';
+import { NotebookState } from './notebook';
 
 export type EditorState = {
   cells: Cell[];
@@ -109,14 +110,17 @@ export const {
 export const performRunCell = createAsyncThunk(
   'editor/runCell',
   async (_, { getState, dispatch, rejectWithValue }) => {
-    const { editor } = getState() as {editor: EditorState};
+    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
 
     const targetCell = editor.cells.find((cell) => cell.id === editor.focusedCellId);
-    if (!targetCell) return rejectWithValue('Rejected');
+    if (!targetCell || !notebook.selectedDataset) return rejectWithValue('Rejected');
 
     try {
       dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
-      const { hasCellError, shouldUpdateBrowser, ...results } = await updateBrowser(targetCell.editorContent);
+      const { hasCellError, shouldUpdateBrowser, ...results } = await updateBrowser({
+        selectedDataset: notebook.selectedDataset,
+        editorContent: targetCell.editorContent,
+      });
       dispatch(setCellStatus({ id: targetCell.id, errorStatus: hasCellError }));
       dispatch(setLastExecutedCellId(targetCell.id));
       if (shouldUpdateBrowser) dispatch(setBrowserUpdateCellId(targetCell.id));
@@ -130,13 +134,18 @@ export const performRunCell = createAsyncThunk(
 export const performRunAllCells = createAsyncThunk(
   'editor/runAllCells',
   async (_, { dispatch, getState, rejectWithValue }) => {
-    const { editor } = getState() as {editor: EditorState};
+    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
+
+    if (!notebook.selectedDataset) return rejectWithValue('Rejected');
 
     try {
       let results;
       for (const targetCell of editor.cells) {
         dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
-        const { hasCellError, shouldUpdateBrowser, ...rest } = await updateBrowser(targetCell.editorContent);
+        const { hasCellError, shouldUpdateBrowser, ...rest } = await updateBrowser({
+          selectedDataset: notebook.selectedDataset,
+          editorContent: targetCell.editorContent,
+        });
         results = rest;
         dispatch(setCellStatus({ id: targetCell.id, errorStatus: hasCellError }));
         dispatch(setLastExecutedCellId(targetCell.id));
