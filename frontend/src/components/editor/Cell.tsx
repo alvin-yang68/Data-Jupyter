@@ -16,26 +16,26 @@ function Cell({ id }: IProps): React.ReactElement {
   const execStatus = useSelector<AppState, string | number>((state) => (
     state.editor.cells.find((c) => c.id === id)?.execStatus || ' '
   ));
-  const errorStatus = useSelector<AppState, boolean>((state) => (
-    state.editor.cells.find((c) => c.id === id)?.errorStatus || false
-  ));
   const editorContent = useSelector<AppState, string>((state) => (
     state.editor.cells.find((c) => c.id === id)?.editorContent || ''
   ));
   const numOfLines = useSelector<AppState, number>((state) => (
     state.editor.cells.find((c) => c.id === id)?.numOfLines || 0
   ));
-  const lastExecutedCellId = useSelector<AppState, number | null>((state) => (
-    state.editor.lastExecutedCellId
+  const hasError = useSelector<AppState, boolean>((state) => (
+    state.editor.cells.find((c) => c.id === id)?.errorStatus || false
   ));
-  const updateBrowserCellId = useSelector<AppState, number | null>((state) => (
-    state.editor.updateBrowserCellId
+  const islastExecuted = useSelector<AppState, boolean>((state) => (
+    state.editor.lastExecutedCellId === id
+  ));
+  const hasUpdatedBrowser = useSelector<AppState, boolean>((state) => (
+    state.editor.updateBrowserCellId === id
   ));
 
   let leftBorder = '';
-  if (lastExecutedCellId && lastExecutedCellId === id) leftBorder = 'border-l-4 border-green-500';
-  if (updateBrowserCellId && updateBrowserCellId === id) leftBorder = 'border-l-4 border-blue-500';
-  if (errorStatus) leftBorder = 'border-l-4 border-red-500';
+  if (islastExecuted) leftBorder = 'border-l-4 border-green-500';
+  if (hasUpdatedBrowser) leftBorder = 'border-l-4 border-blue-500';
+  if (hasError) leftBorder = 'border-l-4 border-red-500';
 
   return (
     <div className={`flex flex-col p-2 ${leftBorder} rounded shadow-md relative hover:shadow-lg overflow-hidden`}>
