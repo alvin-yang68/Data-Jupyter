@@ -29,7 +29,7 @@ def run():
 
     if 'store' not in session:
         # Store editor session to cookies.
-        session['store'] = jsonpickle.encode(Store)
+        session['store'] = jsonpickle.encode(Store())
     store = jsonpickle.decode(session['store'])
 
     # Create a dictionary containing global variables allowed to be exposed to the notebook cell.
