@@ -17,3 +17,5 @@ export type AppState = ReturnType<typeof rootReducer>;
 export const store = configureStore({
   reducer: rootReducer,
 });
+
+export const { dispatch } = store;

@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { fetchCheckpoints, loadCheckpoint, saveCheckpoint } from '../api/checkpoint';
-import { CheckpointDetail } from '../entities';
+import { CheckpointMeta } from '../entities';
 import { BrowserState } from './browser';
 import { EditorState } from './editor';
 import { NotebookState } from './notebook';
 
-export type CheckpointState = CheckpointDetail[];
+export type CheckpointState = CheckpointMeta[];
 
 const initialState: CheckpointState = [];
 

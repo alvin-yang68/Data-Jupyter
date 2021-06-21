@@ -26,7 +26,7 @@ export interface Checkpoint {
   selectedDataset: string;
 }
 
-export interface CheckpointDetail {
+export interface CheckpointMeta {
   id: string;
   timestamp: string;
 }

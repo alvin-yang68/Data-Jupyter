@@ -5,33 +5,41 @@ import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-chrome';
 
 import { AppState } from '../../store';
-import { changeCell, focusCell } from '../../slices/editor';
+import { changeCell } from '../../slices/editor';
 
 interface IProps {
-  id: number;
+  index: number;
+  setFocusedCellIndex: (value: number) => void;
 }
 
-function Cell({ id }: IProps): React.ReactElement {
+function Cell({ index, setFocusedCellIndex }: IProps): React.ReactElement {
   const dispatch = useDispatch();
+
   const execStatus = useSelector<AppState, string | number>((state) => (
-    state.editor.cells.find((c) => c.id === id)?.execStatus || ' '
-  ));
-  const editorContent = useSelector<AppState, string>((state) => (
-    state.editor.cells.find((c) => c.id === id)?.editorContent || ''
-  ));
-  const numOfLines = useSelector<AppState, number>((state) => (
-    state.editor.cells.find((c) => c.id === id)?.numOfLines || 0
-  ));
-  const hasError = useSelector<AppState, boolean>((state) => (
-    state.editor.cells.find((c) => c.id === id)?.errorStatus || false
-  ));
-  const islastExecuted = useSelector<AppState, boolean>((state) => (
-    state.editor.lastExecutedCellId === id
-  ));
-  const hasUpdatedBrowser = useSelector<AppState, boolean>((state) => (
-    state.editor.updateBrowserCellId === id
+    state.editor.cells[index].execStatus
   ));
 
+  const cellContent = useSelector<AppState, string>((state) => (
+    state.editor.cells[index].editorContent
+  ));
+
+  const numOfLines = useSelector<AppState, number>((state) => (
+    state.editor.cells[index].numOfLines
+  ));
+
+  const hasError = useSelector<AppState, boolean>((state) => (
+    state.editor.cells[index].errorStatus
+  ));
+
+  const islastExecuted = useSelector<AppState, boolean>((state) => (
+    state.editor.lastExecutedCellId === state.editor.cells[index].id
+  ));
+
+  const hasUpdatedBrowser = useSelector<AppState, boolean>((state) => (
+    state.editor.updateBrowserCellId === state.editor.cells[index].id
+  ));
+
+  // Determine color of the cell's left border.
   let leftBorder = '';
   if (islastExecuted) leftBorder = 'border-l-4 border-green-500';
   if (hasUpdatedBrowser) leftBorder = 'border-l-4 border-blue-500';
@@ -50,9 +58,9 @@ function Cell({ id }: IProps): React.ReactElement {
             fontSize={16}
             minLines={1}
             maxLines={15}
-            value={editorContent}
-            onFocus={() => dispatch(focusCell(id))}
-            onChange={(value: string) => dispatch(changeCell(value))}
+            value={cellContent}
+            onFocus={() => setFocusedCellIndex(index)}
+            onChange={(value: string) => dispatch(changeCell({ index, value }))}
             wrapEnabled
           />
         </div>

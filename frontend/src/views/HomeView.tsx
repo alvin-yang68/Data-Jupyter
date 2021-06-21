@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 import { AppState } from '../store';
 import DatasetSelection from '../components/DatasetSelection';
 import DataBrowser from '../components/DataBrowser';
-import CellsList from '../components/editor/CellsList';
-import CheckpointsList from '../components/checkpoint/CheckpointsList';
+import Editor from '../components/editor';
+import Checkpoint from '../components/checkpoint';
 
 function HomeView(): React.ReactElement {
   const showCheckpointModal = useSelector<AppState, boolean>((state) => state.notebook.showCheckpointModal);
@@ -17,7 +17,7 @@ function HomeView(): React.ReactElement {
           <a href="index" className="no-underline py-2 hover:text-gray-300"><h1 className="font-bold text-3xl">Data Jupyter</h1></a>
         </div>
       </nav>
-      {showCheckpointModal ? <CheckpointsList /> : (
+      {showCheckpointModal ? <Checkpoint /> : (
         <div className="bg-gray-100">
           <main className="h-full container mx-auto px-4 py-4 text-center">
             <div className="pt-16">
@@ -25,7 +25,7 @@ function HomeView(): React.ReactElement {
               <DatasetSelection />
             </div>
             <div className="grid grid-cols-2 gap-6 py-4">
-              <CellsList />
+              <Editor />
               <DataBrowser />
             </div>
           </main>

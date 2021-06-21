@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { performRunAllCells, performRunCell } from './editor';
+import { performRunCell } from './editor';
 import { performLoadCheckpoint } from './checkpoint';
 
 export type BrowserState = {
@@ -20,9 +20,11 @@ export const browserSlice = createSlice({
   initialState: initialState as BrowserState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(performRunCell.fulfilled, (state, action) => ({ ...state, ...action.payload }));
-
-    builder.addCase(performRunAllCells.fulfilled, (state, action) => ({ ...state, ...action.payload }));
+    builder.addCase(performRunCell.fulfilled, (state, action) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { hasCellError, shouldUpdateBrowser, ...results } = action.payload;
+      return { ...state, ...results };
+    });
 
     builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.browserState);
   },

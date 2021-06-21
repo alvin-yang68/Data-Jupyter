@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppState } from '../../store';
-import { performLoadCheckpoint } from '../../slices/checkpoint';
+import { performFetchCheckpoints, performLoadCheckpoint } from '../../slices/checkpoint';
 import { toggleCheckpointModal } from '../../slices/notebook';
-import Checkpoint from './Checkpoint';
+import CheckpointDetail from './CheckpointDetail';
 
-function CheckpointsList(): React.ReactElement {
+export default function Checkpoint(): React.ReactElement {
   const dispatch = useDispatch();
   const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
   const ids = useSelector<AppState, string[]>((state) => (
@@ -14,6 +14,10 @@ function CheckpointsList(): React.ReactElement {
   ));
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    dispatch(performFetchCheckpoints());
+  }, []);
 
   const handleLoadCheckpoint = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,7 +42,7 @@ function CheckpointsList(): React.ReactElement {
           {ids.length > 0
             ? (
               <ul className="divide-y divide-gray-300">
-                {ids.map((id) => <Checkpoint key={id} id={id} selectedId={selectedId} setSelectedId={setSelectedId} />)}
+                {ids.map((id) => <CheckpointDetail key={id} id={id} selectedId={selectedId} setSelectedId={setSelectedId} />)}
               </ul>
             )
             : <span className="m-4">{loading ? 'Loading...' : 'No checkpoint has been created'}</span>}
@@ -51,5 +55,3 @@ function CheckpointsList(): React.ReactElement {
     </div>
   );
 }
-
-export default CheckpointsList;

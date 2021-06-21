@@ -9,7 +9,6 @@ export type EditorState = {
   cells: Cell[];
   cellCounter: number;
   execCounter: number;
-  focusedCellId: number | null;
   lastExecutedCellId: number | null;
   updateBrowserCellId: number | null;
 }
@@ -18,142 +17,112 @@ const initialState: EditorState = {
   cells: [],
   cellCounter: 0,
   execCounter: 0,
-  focusedCellId: null,
   lastExecutedCellId: null,
   updateBrowserCellId: null,
 };
+
+export const performRunCell = createAsyncThunk(
+  'editor/runCell',
+  async (index: number, { getState, rejectWithValue }) => {
+    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
+
+    if (index >= editor.cells.length || !notebook.selectedDataset) {
+      return rejectWithValue(null);
+    }
+
+    const targetCell = editor.cells[index];
+
+    try {
+      return await updateBrowser({
+        selectedDataset: notebook.selectedDataset,
+        editorContent: targetCell.editorContent,
+      });
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
 
 export const editorSlice = createSlice({
   name: 'editor',
   initialState,
   reducers: {
-    focusCell: (state: EditorState, { payload }: PayloadAction<number | undefined>) => {
-      if (payload) {
-        state.focusedCellId = payload;
-      } else {
-        state.focusedCellId = null;
-      }
-    },
-    addCell: (state: EditorState) => {
+    addCell: (state: EditorState, { payload }: PayloadAction<number | null>) => {
       state.cellCounter += 1;
+
       const newCell = {
         id: state.cellCounter,
-        execStatus: '',
+        execStatus: ' ',
         errorStatus: false,
         editorContent: '',
         numOfLines: 0,
       };
-      if (state.focusedCellId) {
-        const focusedCellIdx = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
-        if (focusedCellIdx > -1) state.cells.splice(focusedCellIdx + 1, 0, newCell);
+
+      if (payload !== null) {
+        // Add a new cell after the focused cell.
+        state.cells.splice(payload + 1, 0, newCell);
       } else {
+        // If no cell or none focused yet, add the new cell at the end.
         state.cells.push(newCell);
       }
     },
-    changeCell: (state: EditorState, { payload }: PayloadAction<string>) => {
-      const index = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
-      if (index > -1) {
-        state.cells[index].numOfLines = payload.split('\n').length;
-        state.cells[index].editorContent = payload;
-      }
+
+    changeCell: (state: EditorState, { payload: { index, value } }: PayloadAction<{index: number, value: string}>) => {
+      state.cells[index].numOfLines = value.split('\n').length;
+      state.cells[index].editorContent = value;
     },
-    setCellStatus: (state: EditorState, { payload }: PayloadAction<{id: number, execStatus?: string, errorStatus: boolean }>) => {
-      let execStatus: (string | number);
-      if (payload.execStatus) {
-        execStatus = payload.execStatus;
+
+    deleteCell: (state: EditorState, { payload }: PayloadAction<number | null>) => {
+      if (payload !== null) {
+        // Remove focused cell.
+        state.cells.splice(payload, 1);
       } else {
-        state.execCounter += 1;
-        execStatus = state.execCounter;
-      }
-      const index = state.cells.findIndex((cell) => cell.id === payload.id);
-      if (index > -1) {
-        state.cells[index].execStatus = execStatus;
-        state.cells[index].errorStatus = payload.errorStatus;
+        // Remove the cell at the end.
+        state.cells.pop();
       }
     },
-    deleteCell: (state: EditorState) => {
-      const index = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
-      if (index > -1) state.cells.splice(index, 1);
+
+    swapCell: (state: EditorState, { payload: { focusedCellIndex, step } }: PayloadAction<{focusedCellIndex: number, step: number}>) => {
+      const from = focusedCellIndex;
+      const to = from + step;
+
+      // Swap the cells with `from` index and `to` index.
+      state.cells.splice(to, 0, state.cells.splice(from, 1)[0]);
     },
-    moveCell: (state: EditorState, { payload }: PayloadAction<number>) => {
-      const from = state.cells.findIndex((cell) => cell.id === state.focusedCellId);
-      const to = Math.min(Math.max(from + payload, 0), state.cells.length - 1);
-      if (from > -1) state.cells.splice(to, 0, state.cells.splice(from, 1)[0]);
-    },
+
     loadCells: (state: EditorState, { payload }: PayloadAction<Cell[]>) => {
       state.cells = payload;
     },
-    setLastExecutedCellId: (state: EditorState, { payload }: PayloadAction<number>) => {
-      state.lastExecutedCellId = payload;
-    },
-    setBrowserUpdateCellId: (state: EditorState, { payload }: PayloadAction<number>) => {
-      state.updateBrowserCellId = payload;
-    },
   },
   extraReducers: (builder) => {
+    builder.addCase(performRunCell.pending, (state, action) => {
+      const targetCellIndex = action.meta.arg;
+      const targetCell = state.cells[targetCellIndex];
+
+      targetCell.execStatus = '*';
+      targetCell.errorStatus = false;
+    });
+
+    builder.addCase(performRunCell.fulfilled, (state, action) => {
+      const targetCellIndex = action.meta.arg;
+      const targetCell = state.cells[targetCellIndex];
+
+      state.execCounter += 1;
+
+      targetCell.execStatus = state.execCounter;
+      targetCell.errorStatus = action.payload.hasCellError;
+      state.lastExecutedCellId = targetCell.id;
+      if (action.payload.shouldUpdateBrowser) state.updateBrowserCellId = targetCell.id;
+    });
+
     builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.editorState);
   },
 });
 
 export const {
-  focusCell,
   addCell,
   changeCell,
-  setCellStatus,
   deleteCell,
-  moveCell,
+  swapCell,
   loadCells,
-  setLastExecutedCellId,
-  setBrowserUpdateCellId,
 } = editorSlice.actions;
-
-export const performRunCell = createAsyncThunk(
-  'editor/runCell',
-  async (_, { getState, dispatch, rejectWithValue }) => {
-    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
-
-    const targetCell = editor.cells.find((cell) => cell.id === editor.focusedCellId);
-    if (!targetCell || !notebook.selectedDataset) return rejectWithValue('Rejected');
-
-    try {
-      dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
-      const { hasCellError, shouldUpdateBrowser, ...results } = await updateBrowser({
-        selectedDataset: notebook.selectedDataset,
-        editorContent: targetCell.editorContent,
-      });
-      dispatch(setCellStatus({ id: targetCell.id, errorStatus: hasCellError }));
-      dispatch(setLastExecutedCellId(targetCell.id));
-      if (shouldUpdateBrowser) dispatch(setBrowserUpdateCellId(targetCell.id));
-      return results;
-    } catch (e) {
-      return rejectWithValue(e.response.data);
-    }
-  },
-);
-
-export const performRunAllCells = createAsyncThunk(
-  'editor/runAllCells',
-  async (_, { dispatch, getState, rejectWithValue }) => {
-    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
-
-    if (!notebook.selectedDataset) return rejectWithValue('Rejected');
-
-    try {
-      let results;
-      for (const targetCell of editor.cells) {
-        dispatch(setCellStatus({ id: targetCell.id, execStatus: '*', errorStatus: false }));
-        const { hasCellError, shouldUpdateBrowser, ...rest } = await updateBrowser({
-          selectedDataset: notebook.selectedDataset,
-          editorContent: targetCell.editorContent,
-        });
-        results = rest;
-        dispatch(setCellStatus({ id: targetCell.id, errorStatus: hasCellError }));
-        dispatch(setLastExecutedCellId(targetCell.id));
-        if (shouldUpdateBrowser) dispatch(setBrowserUpdateCellId(targetCell.id));
-      }
-      return results;
-    } catch (e) {
-      return rejectWithValue(e.response.data);
-    }
-  },
-);

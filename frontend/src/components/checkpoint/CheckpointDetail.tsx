@@ -2,7 +2,7 @@ import React, { SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState } from '../../store';
-import { CheckpointDetail } from '../../entities';
+import { CheckpointMeta } from '../../entities';
 
 interface IProps {
     id: string;
@@ -10,8 +10,8 @@ interface IProps {
     setSelectedId: React.Dispatch<SetStateAction<string | null>>;
 }
 
-function Checkpoint({ id, selectedId, setSelectedId }: IProps): React.ReactElement {
-  const checkpoint = useSelector<AppState, CheckpointDetail | undefined>((state) => (
+export default function CheckpointDetail({ id, selectedId, setSelectedId }: IProps): React.ReactElement {
+  const checkpoint = useSelector<AppState, CheckpointMeta | undefined>((state) => (
     state.checkpoint.find((c) => c.id === id)
   ));
 
@@ -21,5 +21,3 @@ function Checkpoint({ id, selectedId, setSelectedId }: IProps): React.ReactEleme
     </li>
   );
 }
-
-export default Checkpoint;

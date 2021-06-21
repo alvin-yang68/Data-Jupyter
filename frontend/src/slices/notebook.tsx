@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { performRunCell, performRunAllCells } from './editor';
+import { performRunCell } from './editor';
 import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
 
 export type NotebookState = {
@@ -40,21 +40,6 @@ export const notebookSlice = createSlice({
     });
 
     builder.addCase(performRunCell.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
-
-    builder.addCase(performRunAllCells.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
-
-    builder.addCase(performRunAllCells.fulfilled, (state) => {
-      state.loading = false;
-      state.error = null;
-    });
-
-    builder.addCase(performRunAllCells.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message || null;
     });
