@@ -1,19 +1,18 @@
-from flask import Blueprint, Response, request, session, abort, jsonify
+from flask import Blueprint, request, session
 import jsonpickle
-from bson.objectid import ObjectId
 from io import StringIO
 from contextlib import redirect_stdout
 from copy import deepcopy
 
 from backend import mongo
 from .store import Store
-from .utils import load_raw, load_table, listify_cursor
+from .utils import load_raw, load_table
 
 # Blueprint Configuration
-api_bp = Blueprint('api_bp', __name__)
+run_bp = Blueprint('api_bp', __name__, url_prefix='/run')
 
 
-@api_bp.route('/api/run', methods=['GET', 'POST'])
+@run_bp.route('', methods=['GET', 'POST'])
 def run():
     # Parse JSON data from POST request body into Python dictionary.
     request_data = request.get_json()
@@ -70,41 +69,3 @@ def run():
     session['store'] = jsonpickle.encode(store)
 
     return response
-
-
-@api_bp.route('/api/checkpoint', methods=['GET', 'POST'])
-def checkpoint_list():
-    col = mongo.db['checkpoints']
-
-    # Return the list of checkpoints.
-    if request.method == 'GET':
-        checkpoint_details = col.find(
-            filter={},
-            projection={'_id': True, 'timestamp': True}
-        )
-        return jsonify(listify_cursor(checkpoint_details))
-
-    # Save checkpoint to database.
-    if request.method == 'POST':
-        new_checkpoint = request.get_json()
-
-        # Save the editor session into the checkpoint.
-        new_checkpoint['store'] = session['store']
-
-        col.insert_one(new_checkpoint)
-        return Response(status=200)
-
-
-@api_bp.route('/api/checkpoint/<id>', methods=['GET'])
-def checkpoint_detail(id):
-    col = mongo.db['checkpoints']
-    doc = col.find_one(
-        filter={'_id': ObjectId(id)},
-        projection={'_id': False, 'timestamp': False}
-    )
-
-    # Restore the editor session from the checkpoint.
-    session['store'] = doc.pop('store')
-
-    # Flask will automatically convert dictionary to JSON and wrap it in a Response obj.
-    return doc

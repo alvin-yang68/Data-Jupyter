@@ -18,11 +18,11 @@ def init_app():
 
     with app.app_context():
         # Import parts of our application
-        from .index import index
-        from .api import api
+        from .index import index_bp
+        from .api import api_bp
 
         # Register Blueprints
-        app.register_blueprint(index.index_bp)
-        app.register_blueprint(api.api_bp)
+        app.register_blueprint(index_bp)
+        app.register_blueprint(api_bp)
 
         return app
