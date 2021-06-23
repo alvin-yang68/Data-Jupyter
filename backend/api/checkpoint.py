@@ -8,7 +8,7 @@ from .utils import listify_cursor
 checkpoint_bp = Blueprint('checkpoint_bp', __name__, url_prefix='/checkpoint')
 
 
-@checkpoint_bp.route('/', methods=['GET', 'POST'])
+@checkpoint_bp.route('', methods=['GET', 'POST'])
 def checkpoint_list():
     col = mongo.db['checkpoints']
 

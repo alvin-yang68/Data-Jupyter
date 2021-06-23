@@ -1,10 +1,12 @@
 from flask import Flask
 from flask_pymongo import PyMongo
+from flask_sqlalchemy import SQLAlchemy
 
 from .config import Config
 
 # Globally accessible libraries
 mongo = PyMongo()
+psql = SQLAlchemy()
 
 
 def init_app():
@@ -15,6 +17,7 @@ def init_app():
 
     # Initialize Plugins
     mongo.init_app(app)
+    psql.init_app(app)
 
     with app.app_context():
         # Import parts of our application
