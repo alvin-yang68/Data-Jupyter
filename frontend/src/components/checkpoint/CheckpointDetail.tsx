@@ -2,7 +2,7 @@ import React, { SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState } from '../../store';
-import { CheckpointMeta } from '../../entities';
+import { CheckpointMeta } from '../../types';
 
 interface IProps {
     id: string;

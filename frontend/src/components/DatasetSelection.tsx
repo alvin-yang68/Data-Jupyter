@@ -5,9 +5,11 @@ import { useForm, SubmitHandler, FieldValues } from 'react-hook-form';
 import { AppState } from '../store';
 import { selectDataset } from '../slices/notebook';
 
-const demoDatasets = ['nobel_prizes_incorrect', 'movies_incorrect'];
+interface IProps {
+  demoDatasets: string[];
+}
 
-function DatasetSelection(): React.ReactElement {
+function DatasetSelection({ demoDatasets }: IProps): React.ReactElement {
   const dispatch = useDispatch();
   const selectedDataset = useSelector<AppState, string | null>((state) => state.notebook.selectedDataset);
 
@@ -16,7 +18,7 @@ function DatasetSelection(): React.ReactElement {
   const onSubmit: SubmitHandler<FieldValues> = (data) => dispatch(selectDataset(data.dataset));
 
   const radioField = (name: string) => (
-    <label htmlFor={name}>
+    <label key={name} htmlFor={name}>
       <input
         {...register('dataset', { required: true })}
         id={name}

@@ -1,6 +1,17 @@
 import { EditorState } from '../slices/editor';
 import { BrowserState } from '../slices/browser';
 
+export enum BrowserMode {
+  Raw = 'Raw',
+  Table = 'Table',
+  Console = 'Console',
+}
+
+export enum DatabaseModel {
+  Mongodb = 'mongodb',
+  Psql = 'psql'
+}
+
 export interface Dataset {
   raw?: string;
   table?: string;
@@ -23,6 +34,7 @@ export interface Cell {
 export interface Checkpoint {
   editorState: EditorState;
   browserState: BrowserState;
+  databaseModel: DatabaseModel;
   selectedDataset: string;
 }
 

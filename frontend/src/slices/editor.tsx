@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { updateBrowser } from '../api/browser';
-import { Cell } from '../entities';
+import { Cell } from '../types';
 import { performLoadCheckpoint } from './checkpoint';
 import { NotebookState } from './notebook';
 
@@ -34,6 +34,7 @@ export const performRunCell = createAsyncThunk(
 
     try {
       return await updateBrowser({
+        databaseModel: notebook.databaseModel,
         selectedDataset: notebook.selectedDataset,
         editorContent: targetCell.editorContent,
       });
@@ -113,6 +114,14 @@ export const editorSlice = createSlice({
       targetCell.errorStatus = action.payload.hasCellError;
       state.lastExecutedCellId = targetCell.id;
       if (action.payload.shouldUpdateBrowser) state.updateBrowserCellId = targetCell.id;
+    });
+
+    builder.addCase(performRunCell.rejected, (state, action) => {
+      const targetCellIndex = action.meta.arg;
+      const targetCell = state.cells[targetCellIndex];
+
+      targetCell.execStatus = ' ';
+      targetCell.errorStatus = true;
     });
 
     builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.editorState);

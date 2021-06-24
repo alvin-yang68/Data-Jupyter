@@ -75,9 +75,6 @@ export default function Editor(): React.ReactElement {
 
   return (
     <div className="flex flex-col">
-      <div className="py-2">
-        <h1 className="font-bold text-3xl uppercase p-4">Editor</h1>
-      </div>
       <TopBar
         handleAddCell={handleAddCell}
         handleDeleteCell={handleDeleteCell}
