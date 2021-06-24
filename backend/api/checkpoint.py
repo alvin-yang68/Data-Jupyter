@@ -10,12 +10,13 @@ checkpoint_bp = Blueprint('checkpoint_bp', __name__, url_prefix='/checkpoint')
 
 @checkpoint_bp.route('', methods=['GET', 'POST'])
 def checkpoint_list():
+    database_model = request.args.get('databaseModel')
     col = mongo.db['checkpoints']
 
     # Return the list of checkpoints.
     if request.method == 'GET':
         checkpoint_details = col.find(
-            filter={},
+            filter={'databaseModel': database_model},
             projection={'_id': True, 'timestamp': True}
         )
         return jsonify(listify_cursor(checkpoint_details))

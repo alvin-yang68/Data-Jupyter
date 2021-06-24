@@ -14,9 +14,9 @@ def load_table(cursor):
 
 
 def get_column_types(table_name):
-    model = db.Table(table_name, db.engine, autoload=True,
+    model = db.Table(table_name, db.metadata, autoload=True,
                      autoload_with=db.engine)
-    return {str(k): v for k, v in model.columns}
+    return {str(c.name): c.type for c in model.columns}
 
 
 def listify_cursor(cursor):

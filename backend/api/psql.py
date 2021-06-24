@@ -36,7 +36,7 @@ def run():
         df = pd.DataFrame(session['df'])
     else:
         df = pd.read_sql_table(
-            name=dataset_name,
+            table_name=dataset_name,
             con=db.engine
         )
 
@@ -80,8 +80,11 @@ def run():
     # Update browser's data if the user asked for it.
     if 'show' in context:
         data = context['show']
-        response['table'] = data.to_markdown()
-        response['shouldUpdateBrowser'] = True
+        if type(data) is str:
+            response['console'] = data
+        else:
+            response['table'] = data.to_markdown()
+            response['shouldUpdateBrowser'] = True
 
     # Save editor session back.
     session['store'] = jsonpickle.encode(store)
