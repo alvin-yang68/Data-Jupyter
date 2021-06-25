@@ -14,7 +14,7 @@ function App(): React.ReactElement {
     <div className="h-screen w-screen flex flex-col">
       <NavBar />
       <Switch>
-        <Route exact path="/">
+        <Route exact path={['/', '/index']}>
           <HomeView />
         </Route>
 

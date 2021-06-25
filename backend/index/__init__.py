@@ -10,3 +10,8 @@ index_bp = Blueprint('index_bp', __name__)
 def index():
     session.clear()
     return send_from_directory(app.static_folder, 'index.html')
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return send_from_directory(app.static_folder, 'index.html')
