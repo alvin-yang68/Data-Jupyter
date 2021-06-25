@@ -32,13 +32,11 @@ def run():
         session['store'] = jsonpickle.encode(Store())
     store = jsonpickle.decode(session['store'])
 
-    if 'df' in session:
-        df = pd.DataFrame(session['df'])
-    else:
-        df = pd.read_sql_table(
-            table_name=dataset_name,
-            con=db.engine
-        )
+    # Load SQL table as dataframe.
+    df = pd.read_sql_table(
+        table_name=dataset_name,
+        con=db.engine
+    )
 
     # Create a dictionary containing global variables allowed to be exposed to the notebook cell.
     context = {
@@ -88,8 +86,5 @@ def run():
 
     # Save editor session back.
     session['store'] = jsonpickle.encode(store)
-
-    # Save the `df` as a dictionary into the session.
-    session['df'] = df.to_dict()
 
     return response
