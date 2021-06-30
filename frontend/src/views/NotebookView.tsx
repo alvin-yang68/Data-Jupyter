@@ -2,11 +2,12 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AppState } from '../store';
-import { BrowserMode, DatabaseModel } from '../types';
+import { BrowserMode, DatabaseModel, ModalMode } from '../types';
 import DatasetSelection from '../components/DatasetSelection';
 import DataBrowser from '../components/DataBrowser';
 import Editor from '../components/Editor';
-import Checkpoint from '../components/Checkpoint';
+import Modal from '../components/Modal';
+import { LoadCheckpoint, SaveCheckpoint } from '../components/Checkpoint';
 import { selectDatabaseModel } from '../slices/notebook';
 
 const datasetOptions = {
@@ -18,20 +19,26 @@ interface IProps {
   databaseModel: DatabaseModel;
 }
 
-function NotebookView({ databaseModel }: IProps): React.ReactElement {
+export default function NotebookView({ databaseModel }: IProps): React.ReactElement {
   const dispatch = useDispatch();
 
-  const showCheckpointModal = useSelector<AppState, boolean>(
-    (state) => state.notebook.showCheckpointModal,
+  const modalMode = useSelector<AppState, ModalMode>(
+    (state) => state.notebook.modalMode,
   );
 
   useEffect(() => {
     dispatch(selectDatabaseModel(databaseModel));
   }, []);
 
-  return (
-    <>
-      {showCheckpointModal ? <Checkpoint /> : (
+  switch (modalMode) {
+    case ModalMode.LoadCheckpoint:
+      return <Modal title="Load Checkpoint"><LoadCheckpoint /></Modal>;
+
+    case ModalMode.SaveCheckpoint:
+      return <Modal title="Save Checkpoint"><SaveCheckpoint /></Modal>;
+
+    default:
+      return (
         <main className="h-full container mx-auto px-4 py-4 text-center">
           <h1 className="font-bold text-5xl p-4 border-b-2 border-gray-300">
             {databaseModel === DatabaseModel.Mongodb ? 'MongoDB' : 'PostgreSQL'}
@@ -56,9 +63,6 @@ function NotebookView({ databaseModel }: IProps): React.ReactElement {
             </div>
           </div>
         </main>
-      )}
-    </>
-  );
+      );
+  }
 }
-
-export default NotebookView;

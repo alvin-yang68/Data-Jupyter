@@ -17,7 +17,7 @@ def checkpoint_list():
     if request.method == 'GET':
         checkpoint_details = col.find(
             filter={'databaseModel': database_model},
-            projection={'_id': True, 'timestamp': True}
+            projection={'_id': True, 'name': True}
         )
         return jsonify(listify_cursor(checkpoint_details))
 
@@ -37,7 +37,7 @@ def checkpoint_detail(id):
     col = mongo.db['checkpoints']
     doc = col.find_one(
         filter={'_id': ObjectId(id)},
-        projection={'_id': False, 'timestamp': False}
+        projection={'_id': False, 'name': False}
     )
 
     # Restore the editor session from the checkpoint.

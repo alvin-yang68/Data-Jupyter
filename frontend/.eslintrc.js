@@ -43,6 +43,7 @@ module.exports = {
     'no-await-in-loop': 'off',
     'import/first': 'off',
     'dot-notation': 'off',
+    'jsx-a11y/no-autofocus': 'off',
   },
   settings: {
     'import/resolver': {

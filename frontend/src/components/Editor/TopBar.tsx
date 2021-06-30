@@ -1,27 +1,82 @@
 import React from 'react';
+import { unwrapResult } from '@reduxjs/toolkit';
 import ReactTooltip from 'react-tooltip';
 
+import { ModalMode } from '../../types';
+import { dispatch } from '../../store';
+import {
+  addCell,
+  deleteCell,
+  swapCell,
+  performRunCell,
+} from '../../slices/editor';
+import { toggleModal } from '../../slices/notebook';
+import { range } from '../../utils';
+
 interface IProps {
-  handleAddCell: () => void;
-  handleDeleteCell: () => void;
-  handleMoveUpCell: () => void;
-  handleMoveDownCell: () => void;
-  handleRunCell: () => void;
-  handleRunAllCells: () => void;
-  handleSaveCheckpoint: () => void;
-  handleLoadCheckpoint: () => void;
+  numOfCells: number;
+  focusedCellIndex: number | null;
+  setFocusedCellIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
 export default function TopBar({
-  handleAddCell,
-  handleDeleteCell,
-  handleMoveUpCell,
-  handleMoveDownCell,
-  handleRunCell,
-  handleRunAllCells,
-  handleSaveCheckpoint,
-  handleLoadCheckpoint,
+  numOfCells,
+  focusedCellIndex,
+  setFocusedCellIndex,
 }: IProps): React.ReactElement {
+  const handleAddCell = () => dispatch(addCell(focusedCellIndex));
+
+  const handleDeleteCell = () => {
+    dispatch(deleteCell(focusedCellIndex));
+    setFocusedCellIndex(null);
+  };
+
+  const handleMoveUpCell = () => {
+    if (focusedCellIndex !== null && focusedCellIndex > 0) {
+      dispatch(swapCell({ focusedCellIndex, step: -1 }));
+      setFocusedCellIndex(focusedCellIndex - 1);
+    }
+  };
+
+  const handleMoveDownCell = () => {
+    if (focusedCellIndex !== null && focusedCellIndex < (numOfCells - 1)) {
+      dispatch(swapCell({ focusedCellIndex, step: 1 }));
+      setFocusedCellIndex(focusedCellIndex + 1);
+    }
+  };
+
+  const handleRunCell = () => {
+    if (focusedCellIndex !== null) {
+      // Run the focused cell.
+      dispatch(performRunCell(focusedCellIndex));
+    } else {
+      // Run the last cell.
+      dispatch(performRunCell(numOfCells - 1));
+    }
+  };
+
+  const handleRunAllCells = async () => {
+    for (const index of range(numOfCells)) {
+      try {
+        const result = await dispatch(performRunCell(index));
+        const { hasCellError } = unwrapResult(result);
+
+        // Stop running subsequent cells if there is an error.
+        if (hasCellError) break;
+      } catch (e) {
+        break;
+      }
+    }
+  };
+
+  const handleSaveCheckpoint = () => {
+    dispatch(toggleModal(ModalMode.SaveCheckpoint));
+  };
+
+  const handleLoadCheckpoint = () => {
+    dispatch(toggleModal(ModalMode.LoadCheckpoint));
+  };
+
   return (
     <div className="px-4 max-w-4xl max-h-screen bg-gray-50 border border-gray-300 rounded-md text-left">
       <div className="flex flex-row justify-between">

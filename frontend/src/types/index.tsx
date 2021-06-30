@@ -9,7 +9,13 @@ export enum BrowserMode {
 
 export enum DatabaseModel {
   Mongodb = 'mongodb',
-  Psql = 'psql'
+  Psql = 'psql',
+}
+
+export enum ModalMode {
+  SaveCheckpoint = 'Save Checkpoint',
+  LoadCheckpoint = 'Load Checkpoint',
+  None = 'None',
 }
 
 export interface Dataset {
@@ -32,6 +38,7 @@ export interface Cell {
 }
 
 export interface Checkpoint {
+  name: string;
   editorState: EditorState;
   browserState: BrowserState;
   databaseModel: DatabaseModel;
@@ -40,5 +47,5 @@ export interface Checkpoint {
 
 export interface CheckpointMeta {
   id: string;
-  timestamp: string;
+  name: string;
 }

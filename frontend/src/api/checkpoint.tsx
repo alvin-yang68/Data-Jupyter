@@ -8,11 +8,9 @@ export async function fetchCheckpoints(databaseModel: DatabaseModel): Promise<Ch
 }
 
 export async function saveCheckpoint(payload: Checkpoint): Promise<void> {
-  const timestamp = new Date().toLocaleString();
-
   const response = await client.post(
     `/api/checkpoint?databaseModel=${payload.databaseModel}`,
-    { ...payload, timestamp },
+    payload,
   );
   return response.data;
 }

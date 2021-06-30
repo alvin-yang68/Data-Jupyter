@@ -29,7 +29,7 @@ export const performFetchCheckpoints = createAsyncThunk(
 
 export const performSaveCheckpoint = createAsyncThunk(
   'checkpoint/save',
-  async (_, { getState, rejectWithValue }) => {
+  async (name: string, { getState, rejectWithValue }) => {
     const { editor, notebook, browser } = getState() as {editor: EditorState, notebook: NotebookState, browser: BrowserState};
 
     if (!notebook.selectedDataset || !notebook.databaseModel || browser === null) {
@@ -38,6 +38,7 @@ export const performSaveCheckpoint = createAsyncThunk(
 
     try {
       return await saveCheckpoint({
+        name,
         editorState: editor,
         browserState: browser,
         databaseModel: notebook.databaseModel,

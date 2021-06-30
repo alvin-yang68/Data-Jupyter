@@ -17,7 +17,7 @@ export default function CheckpointDetail({ id, selectedId, setSelectedId }: IPro
 
   return (
     <li onClick={() => setSelectedId(id)} className={`p-4 hover:bg-gray-100 cursor-pointer text-center ${selectedId === id && 'bg-gray-100'}`} role="presentation">
-      {checkpoint?.timestamp}
+      {checkpoint?.name}
     </li>
   );
 }

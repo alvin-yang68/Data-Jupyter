@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { performRunCell } from './editor';
 import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
-import { DatabaseModel } from '../types';
+import { DatabaseModel, ModalMode } from '../types';
 
 export type NotebookState = {
   loading: boolean;
   error: string | null;
   databaseModel: DatabaseModel | null;
   selectedDataset: string | null;
-  showCheckpointModal: boolean;
+  modalMode: ModalMode;
 }
 
 const initialState: NotebookState = {
@@ -17,7 +17,7 @@ const initialState: NotebookState = {
   error: null,
   databaseModel: null,
   selectedDataset: null,
-  showCheckpointModal: false,
+  modalMode: ModalMode.None,
 };
 
 export const notebookSlice = createSlice({
@@ -32,8 +32,8 @@ export const notebookSlice = createSlice({
       state.selectedDataset = payload;
     },
 
-    toggleCheckpointModal: (state: NotebookState, { payload }: PayloadAction<boolean>) => {
-      state.showCheckpointModal = payload;
+    toggleModal: (state: NotebookState, { payload }: PayloadAction<ModalMode>) => {
+      state.modalMode = payload;
     },
   },
   extraReducers: (builder) => {
@@ -103,5 +103,5 @@ export const notebookSlice = createSlice({
 export const {
   selectDatabaseModel,
   selectDataset,
-  toggleCheckpointModal,
+  toggleModal,
 } = notebookSlice.actions;
