@@ -5,6 +5,7 @@ import {
 } from 'react-router-dom';
 
 import NavBar from './components/NavBar';
+import ErrorAlert from './components/ErrorAlert';
 import { DatabaseModel } from './types';
 import HomeView from './views/HomeView';
 import NotebookView from './views/NotebookView';
@@ -29,6 +30,8 @@ export default function App(): React.ReactElement {
           </Route>
         </Switch>
       </main>
+
+      <ErrorAlert />
     </div>
   );
 }

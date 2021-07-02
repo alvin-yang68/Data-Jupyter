@@ -10,7 +10,7 @@ import {
   swapCell,
   performRunCell,
 } from '../../slices/editor';
-import { toggleModal } from '../../slices/notebook';
+import { setNotebookError, toggleModal } from '../../slices/notebook';
 import { range } from '../../utils';
 
 interface IProps {
@@ -46,6 +46,11 @@ export default function TopBar({
   };
 
   const handleRunCell = () => {
+    if (numOfCells === 0) {
+      dispatch(setNotebookError('No cell to run'));
+      return;
+    }
+
     if (focusedCellIndex !== null) {
       // Run the focused cell.
       dispatch(performRunCell(focusedCellIndex));
@@ -56,6 +61,11 @@ export default function TopBar({
   };
 
   const handleRunAllCells = async () => {
+    if (numOfCells === 0) {
+      dispatch(setNotebookError('No cell to run'));
+      return;
+    }
+
     for (const index of range(numOfCells)) {
       try {
         const result = await dispatch(performRunCell(index));

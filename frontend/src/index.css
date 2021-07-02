@@ -15,7 +15,7 @@
 }
 
 .button-icon {
-  @apply h-7 w-7 text-blue-500 hover:bg-gray-200 m-2 cursor-pointer outline-none;
+  @apply h-7 w-7 text-blue-500 hover:bg-gray-200 cursor-pointer outline-none;
 }
 
 tr {

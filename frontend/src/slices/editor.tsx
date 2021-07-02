@@ -26,9 +26,9 @@ export const performRunCell = createAsyncThunk(
   async (index: number, { getState, rejectWithValue }) => {
     const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
 
-    if (index >= editor.cells.length || !notebook.selectedDataset) {
-      return rejectWithValue(null);
-    }
+    if (index > editor.cells.length) return rejectWithValue('Invalid cell');
+
+    if (!notebook.selectedDataset) return rejectWithValue('No dataset selected');
 
     const targetCell = editor.cells[index];
 

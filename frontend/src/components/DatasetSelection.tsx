@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState, dispatch } from '../store';
-import { selectDataset } from '../slices/notebook';
-import ErrorMessage from './errors/ErrorMessage';
+import { selectDataset, setNotebookError } from '../slices/notebook';
 
 interface IProps {
   demoDatasets: string[];
@@ -11,8 +10,6 @@ interface IProps {
 
 export default function DatasetSelection({ demoDatasets }: IProps): React.ReactElement {
   const selectedDataset = useSelector<AppState, string | null>((state) => state.notebook.selectedDataset);
-
-  const [error, setError] = useState<string | null>(null);
 
   const [selection, setSelection] = useState<string>('NONE');
 
@@ -31,12 +28,12 @@ export default function DatasetSelection({ demoDatasets }: IProps): React.ReactE
     e.preventDefault();
 
     if (selection === 'NONE') {
-      setError('No dataset selected.');
+      dispatch(setNotebookError('No dataset selected'));
       return;
     }
 
     dispatch(selectDataset(selection));
-    setError(null);
+    dispatch(setNotebookError(null));
   };
 
   const renderOption = (name: string) => (
@@ -58,7 +55,7 @@ export default function DatasetSelection({ demoDatasets }: IProps): React.ReactE
           className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
         >
 
-          <option disabled selected value="NONE"> -- select an option -- </option>
+          <option disabled value="NONE"> -- select an option -- </option>
 
           {demoDatasets.map((name) => renderOption(name))}
 
@@ -66,9 +63,6 @@ export default function DatasetSelection({ demoDatasets }: IProps): React.ReactE
 
         <input type="submit" value="Select" className="cursor-pointer button-relief" />
       </form>
-      <div className={`transition duration-500 ease-in-out ${error ? 'opacity-100' : 'opacity-0'}`}>
-        {!!error && <ErrorMessage error={error} setError={setError} />}
-      </div>
     </>
   );
 }

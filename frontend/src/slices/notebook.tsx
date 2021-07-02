@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  AnyAction,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { performRunCell } from './editor';
 import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
@@ -7,7 +12,7 @@ import { uploadDataset } from '../api/dataset';
 
 export type NotebookState = {
   loading: boolean;
-  error: string | null;
+  error: {timestamp: number, message: string} | null;
   databaseModel: DatabaseModel | null;
   selectedDataset: string | null;
   modalMode: ModalMode;
@@ -51,64 +56,72 @@ export const notebookSlice = createSlice({
       state.selectedDataset = payload;
     },
 
+    setNotebookError: (state: NotebookState, { payload }: PayloadAction<string | null>) => {
+      if (payload) {
+        state.error = { timestamp: Date.now(), message: payload };
+      } else {
+        state.error = null;
+      }
+    },
+
     toggleModal: (state: NotebookState, { payload }: PayloadAction<ModalMode>) => {
       state.modalMode = payload;
     },
   },
   extraReducers: (builder) => {
+    const pendingAction = (state: NotebookState) => {
+      state.loading = true;
+      state.error = null;
+    };
+
+    const rejectedAction = (state: NotebookState, action: AnyAction) => {
+      const errorMessage: string | undefined = action.payload as string | undefined || action.error.message;
+
+      state.loading = false;
+
+      if (errorMessage) {
+        state.error = { timestamp: Date.now(), message: errorMessage };
+      } else {
+        state.error = null;
+      }
+    };
+
+    builder.addCase(performUploadDataset.pending, pendingAction);
+
     builder.addCase(performUploadDataset.fulfilled, (state, action) => {
+      state.loading = false;
+      state.error = null;
       state.selectedDataset = action.payload;
     });
 
-    builder.addCase(performRunCell.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
+    builder.addCase(performRunCell.pending, pendingAction);
 
     builder.addCase(performRunCell.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
 
-    builder.addCase(performRunCell.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
+    builder.addCase(performRunCell.rejected, rejectedAction);
 
-    builder.addCase(performFetchCheckpoints.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
+    builder.addCase(performFetchCheckpoints.pending, pendingAction);
 
     builder.addCase(performFetchCheckpoints.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
 
-    builder.addCase(performFetchCheckpoints.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
+    builder.addCase(performFetchCheckpoints.rejected, rejectedAction);
 
-    builder.addCase(performSaveCheckpoint.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
+    builder.addCase(performSaveCheckpoint.pending, pendingAction);
 
     builder.addCase(performSaveCheckpoint.fulfilled, (state) => {
       state.loading = false;
       state.error = null;
     });
 
-    builder.addCase(performSaveCheckpoint.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
+    builder.addCase(performSaveCheckpoint.rejected, rejectedAction);
 
-    builder.addCase(performLoadCheckpoint.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    });
+    builder.addCase(performLoadCheckpoint.pending, pendingAction);
 
     builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => {
       state.loading = false;
@@ -116,10 +129,7 @@ export const notebookSlice = createSlice({
       state.selectedDataset = action.payload.selectedDataset;
     });
 
-    builder.addCase(performLoadCheckpoint.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.error.message || null;
-    });
+    builder.addCase(performLoadCheckpoint.rejected, rejectedAction);
   },
 });
 
@@ -127,4 +137,5 @@ export const {
   selectDatabaseModel,
   selectDataset,
   toggleModal,
+  setNotebookError,
 } = notebookSlice.actions;
