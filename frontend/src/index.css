@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .button {
-  @apply flex flex-row items-center rounded my-4 px-3 py-2 m-1 text-white font-bold;
+  @apply flex flex-row items-center rounded px-3 py-2 m-1 text-white font-bold active:bg-blue-900;
 }
 
 .button-relief {
-  @apply flex flex-row items-center rounded my-4 px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white font-bold;
+  @apply flex flex-row items-center rounded px-3 py-2 m-1 border-b-4 border-l-2 shadow-lg bg-blue-700 border-blue-800 text-white font-bold active:bg-blue-900;
 }
 
 .button-empty {

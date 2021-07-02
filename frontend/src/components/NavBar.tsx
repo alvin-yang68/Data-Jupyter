@@ -8,7 +8,7 @@ export default function NavBar(): React.ReactElement {
   const dispatch = useDispatch();
 
   return (
-    <nav className="flex flex-row items-center py-1 bg-blue-600 border-b-8 border-blue-200">
+    <nav className="fixed z-10 w-screen flex flex-row items-center py-1 bg-blue-600 border-b-8 border-blue-200">
       <div className="flex flex-row items-center gap-6 text-white">
         <Link
           to="/"

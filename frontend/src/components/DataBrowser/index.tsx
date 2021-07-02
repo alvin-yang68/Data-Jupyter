@@ -23,6 +23,7 @@ export default function DataBrowser({ modes }: IProps): React.ReactElement {
 
   const tabButtons = modes.map((mode) => (
     <button
+      key={mode}
       type="button"
       name={mode}
       onClick={handleClick}

@@ -21,7 +21,6 @@ export const browserSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(performRunCell.fulfilled, (state, action) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { hasCellError, shouldUpdateBrowser, ...results } = action.payload;
       return { ...state, ...results };
     });

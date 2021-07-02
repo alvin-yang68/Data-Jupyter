@@ -44,6 +44,7 @@ module.exports = {
     'import/first': 'off',
     'dot-notation': 'off',
     'jsx-a11y/no-autofocus': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
   },
   settings: {
     'import/resolver': {

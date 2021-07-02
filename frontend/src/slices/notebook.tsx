@@ -1,8 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { performRunCell } from './editor';
 import { performFetchCheckpoints, performLoadCheckpoint, performSaveCheckpoint } from './checkpoint';
 import { DatabaseModel, ModalMode } from '../types';
+import { uploadDataset } from '../api/dataset';
 
 export type NotebookState = {
   loading: boolean;
@@ -19,6 +20,24 @@ const initialState: NotebookState = {
   selectedDataset: null,
   modalMode: ModalMode.None,
 };
+
+export const performUploadDataset = createAsyncThunk(
+  'notebook/uploadDataset',
+  async (file: FormData, { getState, rejectWithValue }) => {
+    const { notebook } = getState() as {notebook: NotebookState};
+
+    if (!notebook.databaseModel) return rejectWithValue(null);
+
+    try {
+      return await uploadDataset({
+        databaseModel: notebook.databaseModel,
+        file,
+      });
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
 
 export const notebookSlice = createSlice({
   name: 'notebook',
@@ -37,6 +56,10 @@ export const notebookSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(performUploadDataset.fulfilled, (state, action) => {
+      state.selectedDataset = action.payload;
+    });
+
     builder.addCase(performRunCell.pending, (state) => {
       state.loading = true;
       state.error = null;
