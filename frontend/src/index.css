@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 
+:hover is a pseudo-selector, i.e. this will only select dropdown class which is hovered.
+Recall that > symbol means it is selecting its child, i.e. dropdown-content the child of dropdown.
+*/
+.dropdown:hover > .dropdown-content {
+  display: block;
+}
+
 .button {
   @apply flex flex-row items-center rounded px-3 py-2 m-1 text-white font-bold active:bg-blue-900;
 }

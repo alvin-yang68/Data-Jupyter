@@ -14,6 +14,7 @@ export type NotebookState = {
   loading: boolean;
   error: {timestamp: number, message: string} | null;
   databaseModel: DatabaseModel | null;
+  datasets: string[];
   selectedDataset: string | null;
   modalMode: ModalMode;
 }
@@ -22,6 +23,7 @@ const initialState: NotebookState = {
   loading: false,
   error: null,
   databaseModel: null,
+  datasets: [],
   selectedDataset: null,
   modalMode: ModalMode.None,
 };

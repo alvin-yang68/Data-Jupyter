@@ -9,6 +9,7 @@ import ErrorAlert from './components/ErrorAlert';
 import { DatabaseModel } from './types';
 import HomeView from './views/HomeView';
 import NotebookView from './views/NotebookView';
+import DatasetView from './views/DatasetView';
 
 export default function App(): React.ReactElement {
   return (
@@ -27,6 +28,10 @@ export default function App(): React.ReactElement {
 
           <Route exact path="/mongodb">
             <NotebookView key="mongodb" databaseModel={DatabaseModel.Mongodb} />
+          </Route>
+
+          <Route exact path="/dataset">
+            <DatasetView />
           </Route>
         </Switch>
       </main>
