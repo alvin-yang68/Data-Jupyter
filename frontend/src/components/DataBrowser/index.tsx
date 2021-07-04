@@ -12,7 +12,7 @@ interface IProps {
 }
 
 export default function DataBrowser({ modes }: IProps): React.ReactElement {
-  const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
+  const loading = useSelector<AppState, boolean>((state) => state.status.loading);
 
   const [browserMode, setBrowserMode] = useState<BrowserMode>(modes[0]);
 

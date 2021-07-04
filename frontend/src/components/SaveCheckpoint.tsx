@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 
-import { ModalMode } from '../../types';
-import { performSaveCheckpoint } from '../../slices/checkpoint';
-import { toggleModal } from '../../slices/notebook';
+import { dispatch } from '../store';
+import { ModalMode } from '../types';
+import { performSaveCheckpoint } from '../slices/checkpoint';
+import { toggleModal } from '../slices/notebook';
 
 export default function SaveCheckpoint(): React.ReactElement {
-  const dispatch = useDispatch();
-
   const [checkpointName, setCheckpointName] = useState<string>('');
 
   const timestamp = new Date().toLocaleString();

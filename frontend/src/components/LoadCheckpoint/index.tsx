@@ -4,11 +4,12 @@ import { useSelector } from 'react-redux';
 import { ModalMode } from '../../types';
 import { AppState, dispatch } from '../../store';
 import { performFetchCheckpoints, performLoadCheckpoint } from '../../slices/checkpoint';
-import { setNotebookError, toggleModal } from '../../slices/notebook';
+import { toggleModal } from '../../slices/notebook';
+import { setError } from '../../slices/status';
 import CheckpointDetail from './CheckpointDetail';
 
 export default function LoadCheckpoint(): React.ReactElement {
-  const loading = useSelector<AppState, boolean>((state) => state.notebook.loading);
+  const loading = useSelector<AppState, boolean>((state) => state.status.loading);
 
   const ids = useSelector<AppState, string[]>((state) => (
     state.checkpoint.map((checkpointDetail) => checkpointDetail.id)
@@ -23,7 +24,7 @@ export default function LoadCheckpoint(): React.ReactElement {
   const handleLoadCheckpoint = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!selectedId) {
-      dispatch(setNotebookError('No checkpoint selected'));
+      dispatch(setError('No checkpoint selected'));
       return;
     }
     dispatch(performLoadCheckpoint(selectedId));

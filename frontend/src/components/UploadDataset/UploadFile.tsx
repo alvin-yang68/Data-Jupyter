@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { dispatch } from '../store';
-import { performUploadDataset } from '../slices/notebook';
+import { dispatch } from '../../store';
+import { performUploadDataset } from '../../slices/notebook';
 
 const uploadCloudIcon = (
   <svg className="w-8 h-8" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -16,20 +16,16 @@ const circleCheckIcon = (
 );
 
 export default function UploadDataset(): React.ReactElement {
-  const [filename, setFilename] = useState<string | null>(null);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
-    setFilename(file.name);
 
     // Attach to a `FormData` with an encoding type of "multipart/form-data"
     const formData = new FormData();
     formData.append('file', file);
 
-    dispatch(performUploadDataset(formData))
-      .catch(() => setFilename(null));
+    dispatch(performUploadDataset(formData));
   };
 
   return (

@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { AppState, dispatch } from '../store';
-import { selectDataset, setNotebookError } from '../slices/notebook';
+import { selectDataset } from '../slices/notebook';
+import { setError } from '../slices/status';
 
 interface IProps {
   demoDatasets: string[];
 }
 
-export default function DatasetSelection({ demoDatasets }: IProps): React.ReactElement {
+export default function DatasetSelect({ demoDatasets }: IProps): React.ReactElement {
   const selectedDataset = useSelector<AppState, string | null>((state) => state.notebook.selectedDataset);
 
   const [selection, setSelection] = useState<string>('NONE');
@@ -28,12 +29,12 @@ export default function DatasetSelection({ demoDatasets }: IProps): React.ReactE
     e.preventDefault();
 
     if (selection === 'NONE') {
-      dispatch(setNotebookError('No dataset selected'));
+      dispatch(setError('No dataset selected'));
       return;
     }
 
     dispatch(selectDataset(selection));
-    dispatch(setNotebookError(null));
+    dispatch(setError(null));
   };
 
   const renderOption = (name: string) => (
@@ -47,22 +48,20 @@ export default function DatasetSelection({ demoDatasets }: IProps): React.ReactE
   );
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className="mx-auto flex flex-col gap-4 items-center">
-        <select
-          value={selection}
-          onChange={handleSelectionChange}
-          className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
-        >
+    <form onSubmit={handleSubmit} className="mx-auto flex flex-col gap-4 items-center">
+      <select
+        value={selection}
+        onChange={handleSelectionChange}
+        className="border border-gray-300 rounded-full text-gray-600 h-10 pl-5 pr-10 bg-white hover:border-gray-400 focus:outline-none appearance-none"
+      >
 
-          <option disabled value="NONE"> -- select an option -- </option>
+        <option disabled value="NONE"> -- select an option -- </option>
 
-          {demoDatasets.map((name) => renderOption(name))}
+        {demoDatasets.map((name) => renderOption(name))}
 
-        </select>
+      </select>
 
-        <input type="submit" value="Select" className="cursor-pointer button-relief" />
-      </form>
-    </>
+      <input type="submit" value="Select" className="cursor-pointer button-relief" />
+    </form>
   );
 }

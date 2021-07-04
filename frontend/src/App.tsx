@@ -5,16 +5,18 @@ import {
 } from 'react-router-dom';
 
 import NavBar from './components/NavBar';
-import ErrorAlert from './components/ErrorAlert';
+import AlertBox from './components/AlertBox';
 import { DatabaseModel } from './types';
 import HomeView from './views/HomeView';
 import NotebookView from './views/NotebookView';
-import DatasetView from './views/DatasetView';
+import UploadView from './views/UploadView';
 
 export default function App(): React.ReactElement {
   return (
     <div className="h-screen w-screen flex flex-col">
       <NavBar />
+
+      <AlertBox />
 
       <main className="mt-16">
         <Switch>
@@ -30,13 +32,11 @@ export default function App(): React.ReactElement {
             <NotebookView key="mongodb" databaseModel={DatabaseModel.Mongodb} />
           </Route>
 
-          <Route exact path="/dataset">
-            <DatasetView />
+          <Route exact path="/upload">
+            <UploadView />
           </Route>
         </Switch>
       </main>
-
-      <ErrorAlert />
     </div>
   );
 }

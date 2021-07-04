@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import { AppState } from '../store';
 import { BrowserMode, DatabaseModel, ModalMode } from '../types';
-import UploadDataset from '../components/UploadDataset';
-import DatasetSelection from '../components/DatasetSelection';
-import DataBrowser from '../components/DataBrowser';
-import Editor from '../components/Editor';
-import Modal from '../components/Modal';
-import { LoadCheckpoint, SaveCheckpoint } from '../components/checkpoint';
+import { AppState, dispatch } from '../store';
 import { selectDatabaseModel } from '../slices/notebook';
+import Modal from '../components/Modal';
+import DatasetSelect from '../components/DatasetSelect';
+import Editor from '../components/Editor';
+import DataBrowser from '../components/DataBrowser';
+import LoadCheckpoint from '../components/LoadCheckpoint';
+import SaveCheckpoint from '../components/SaveCheckpoint';
 
 const datasetOptions = {
   [DatabaseModel.Mongodb]: ['nobel_prizes_incorrect', 'movies_incorrect'],
@@ -21,8 +21,6 @@ interface IProps {
 }
 
 export default function NotebookView({ databaseModel }: IProps): React.ReactElement {
-  const dispatch = useDispatch();
-
   const modalMode = useSelector<AppState, ModalMode>(
     (state) => state.notebook.modalMode,
   );
@@ -40,19 +38,14 @@ export default function NotebookView({ databaseModel }: IProps): React.ReactElem
 
     default:
       return (
-        <div className="h-full container mx-auto px-4 py-4 text-center">
+        <div className="h-full container mx-auto px-4 pt-16 text-center">
           <h1 className="font-bold text-5xl p-4 border-b-2 border-gray-300">
             {databaseModel === DatabaseModel.Mongodb ? 'MongoDB' : 'PostgreSQL'}
           </h1>
 
-          <div className="pt-16">
-            <h1 className="font-bold text-3xl uppercase p-4">Upload dataset</h1>
-            <UploadDataset />
-          </div>
-
           <div className="py-4">
             <h1 className="font-bold text-3xl uppercase p-4">Choose a demo dataset</h1>
-            <DatasetSelection demoDatasets={datasetOptions[databaseModel]} />
+            <DatasetSelect demoDatasets={datasetOptions[databaseModel]} />
           </div>
 
           <div className="grid grid-cols-2 gap-6 py-4">
