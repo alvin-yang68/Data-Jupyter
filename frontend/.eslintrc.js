@@ -45,6 +45,7 @@ module.exports = {
     'dot-notation': 'off',
     'jsx-a11y/no-autofocus': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    'react/require-default-props': 'off',
   },
   settings: {
     'import/resolver': {

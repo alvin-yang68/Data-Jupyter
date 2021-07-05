@@ -3,18 +3,13 @@ import { useSelector } from 'react-redux';
 
 import { BrowserMode, DatabaseModel, ModalMode } from '../types';
 import { AppState, dispatch } from '../store';
-import { selectDatabaseModel } from '../slices/notebook';
+import { selectDatabaseModel, performFetchDatasets } from '../slices/notebook';
 import Modal from '../components/Modal';
 import DatasetSelect from '../components/DatasetSelect';
 import Editor from '../components/Editor';
 import DataBrowser from '../components/DataBrowser';
 import LoadCheckpoint from '../components/LoadCheckpoint';
 import SaveCheckpoint from '../components/SaveCheckpoint';
-
-const datasetOptions = {
-  [DatabaseModel.Mongodb]: ['nobel_prizes_incorrect', 'movies_incorrect'],
-  [DatabaseModel.Psql]: ['courses', 'enrolls', 'professors', 'students'],
-};
 
 interface IProps {
   databaseModel: DatabaseModel;
@@ -27,6 +22,7 @@ export default function NotebookView({ databaseModel }: IProps): React.ReactElem
 
   useEffect(() => {
     dispatch(selectDatabaseModel(databaseModel));
+    dispatch(performFetchDatasets());
   }, []);
 
   switch (modalMode) {
@@ -44,8 +40,8 @@ export default function NotebookView({ databaseModel }: IProps): React.ReactElem
           </h1>
 
           <div className="py-4">
-            <h1 className="font-bold text-3xl uppercase p-4">Choose a demo dataset</h1>
-            <DatasetSelect demoDatasets={datasetOptions[databaseModel]} />
+            <h1 className="font-bold text-3xl uppercase p-4">Choose a dataset</h1>
+            <DatasetSelect />
           </div>
 
           <div className="grid grid-cols-2 gap-6 py-4">

@@ -4,12 +4,12 @@ import {
   Route,
 } from 'react-router-dom';
 
+import { DatabaseModel } from './types';
 import NavBar from './components/NavBar';
 import AlertBox from './components/AlertBox';
-import { DatabaseModel } from './types';
 import HomeView from './views/HomeView';
 import NotebookView from './views/NotebookView';
-import UploadView from './views/UploadView';
+import DatasetView from './views/DatasetView';
 
 export default function App(): React.ReactElement {
   return (
@@ -32,8 +32,8 @@ export default function App(): React.ReactElement {
             <NotebookView key="mongodb" databaseModel={DatabaseModel.Mongodb} />
           </Route>
 
-          <Route exact path="/upload">
-            <UploadView />
+          <Route exact path="/dataset">
+            <DatasetView />
           </Route>
         </Switch>
       </main>

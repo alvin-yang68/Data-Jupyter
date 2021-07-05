@@ -5,12 +5,14 @@ import { AppState, dispatch } from '../store';
 import { selectDataset } from '../slices/notebook';
 import { setError } from '../slices/status';
 
-interface IProps {
-  demoDatasets: string[];
-}
+export default function DatasetSelect(): React.ReactElement {
+  const datasets = useSelector<AppState, string[]>(
+    (state) => state.notebook.datasets,
+  );
 
-export default function DatasetSelect({ demoDatasets }: IProps): React.ReactElement {
-  const selectedDataset = useSelector<AppState, string | null>((state) => state.notebook.selectedDataset);
+  const selectedDataset = useSelector<AppState, string | null>(
+    (state) => state.notebook.selectedDataset,
+  );
 
   const [selection, setSelection] = useState<string>('NONE');
 
@@ -57,7 +59,7 @@ export default function DatasetSelect({ demoDatasets }: IProps): React.ReactElem
 
         <option disabled value="NONE"> -- select an option -- </option>
 
-        {demoDatasets.map((name) => renderOption(name))}
+        {datasets.map((name) => renderOption(name))}
 
       </select>
 

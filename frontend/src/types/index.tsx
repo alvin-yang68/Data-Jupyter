@@ -7,24 +7,21 @@ export enum BrowserMode {
   Console = 'Console',
 }
 
-export enum DatabaseModel {
-  Mongodb = 'mongodb',
-  Psql = 'psql',
-}
-
 export enum ModalMode {
   SaveCheckpoint = 'Save Checkpoint',
   LoadCheckpoint = 'Load Checkpoint',
   None = 'None',
 }
 
-export interface Dataset {
+export enum DatabaseModel {
+  Mongodb = 'mongodb',
+  Psql = 'psql',
+}
+
+export interface CellExecutionResult {
   raw?: string;
   table?: string;
   console?: string;
-}
-
-export interface CellExecutionResult extends Dataset {
   hasCellError: boolean;
   shouldUpdateBrowser: boolean;
 }
@@ -41,7 +38,7 @@ export interface Checkpoint {
   name: string;
   editorState: EditorState;
   browserState: BrowserState;
-  databaseModel: DatabaseModel;
+  databaseModel: string;
   selectedDataset: string;
 }
 

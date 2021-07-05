@@ -15,7 +15,7 @@ export default function AlertBox(): React.ReactElement {
   );
 
   return (
-    <div className={`transition duration-200 ease-in-out ${error ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`transition duration-200 ease-in-out ${error || success ? 'opacity-100' : 'opacity-0'}`}>
       {!!error && <Error message={error.message} />}
       {!!success && <Success message={success.message} />}
     </div>

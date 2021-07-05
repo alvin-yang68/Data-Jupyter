@@ -6,7 +6,7 @@ import {
 
 import { performLoadCheckpoint } from './checkpoint';
 import { DatabaseModel, ModalMode } from '../types';
-import { uploadDataset } from '../api/dataset';
+import { UploadDatasetPayload, uploadDataset, fetchDatasets } from '../api/dataset';
 
 export type NotebookState = {
   databaseModel: DatabaseModel | null;
@@ -22,18 +22,26 @@ const initialState: NotebookState = {
   modalMode: ModalMode.None,
 };
 
-export const performUploadDataset = createAsyncThunk(
-  'notebook/uploadDataset',
-  async (file: FormData, { getState, rejectWithValue }) => {
-    const { notebook } = getState() as {notebook: NotebookState};
+export const performFetchDatasets = createAsyncThunk(
+  'notebook/fetchDatasets',
+  async (_, { getState, rejectWithValue }) => {
+    const { notebook: { databaseModel } } = getState() as {notebook: {databaseModel: DatabaseModel | null}};
 
-    if (!notebook.databaseModel) return rejectWithValue(null);
+    if (!databaseModel) return rejectWithValue('Unable to fetch datasets. No database model selected');
 
     try {
-      return await uploadDataset({
-        databaseModel: notebook.databaseModel,
-        file,
-      });
+      return await fetchDatasets(databaseModel);
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
+
+export const performUploadDataset = createAsyncThunk(
+  'notebook/uploadDataset',
+  async (payload: UploadDatasetPayload, { rejectWithValue }) => {
+    try {
+      return await uploadDataset(payload);
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
@@ -63,6 +71,10 @@ export const notebookSlice = createSlice({
 
     builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => {
       state.selectedDataset = action.payload.selectedDataset;
+    });
+
+    builder.addCase(performFetchDatasets.fulfilled, (state, action) => {
+      state.datasets = action.payload;
     });
   },
 });

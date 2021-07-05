@@ -1,8 +1,8 @@
 import client from './index';
 
-import { Checkpoint, CheckpointMeta, DatabaseModel } from '../types';
+import { Checkpoint, CheckpointMeta } from '../types';
 
-export async function fetchCheckpoints(databaseModel: DatabaseModel): Promise<CheckpointMeta[]> {
+export async function fetchCheckpoints(databaseModel: string): Promise<CheckpointMeta[]> {
   const response = await client.get(`/api/checkpoint?databaseModel=${databaseModel}`);
   return response.data;
 }

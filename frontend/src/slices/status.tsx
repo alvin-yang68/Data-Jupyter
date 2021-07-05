@@ -5,6 +5,8 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 
+import { performUploadDataset } from './notebook';
+
 export type StatusState = {
   loading: boolean;
   success: {timestamp: number, message: string} | null;
@@ -43,6 +45,7 @@ export const statusSlice = createSlice({
     setError: (state: StatusState, { payload }: PayloadAction<string | null>) => {
       if (payload) {
         state.error = { timestamp: Date.now(), message: payload };
+        state.success = null;
       } else {
         state.error = null;
       }
@@ -51,12 +54,17 @@ export const statusSlice = createSlice({
     setSuccess: (state: StatusState, { payload }: PayloadAction<string | null>) => {
       if (payload) {
         state.success = { timestamp: Date.now(), message: payload };
+        state.error = null;
       } else {
         state.success = null;
       }
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(performUploadDataset.fulfilled, (state) => {
+      state.success = { timestamp: Date.now(), message: 'Successfully uploaded dataset' };
+    });
+
     // Match any action that has type ending with '/pending'
     builder.addMatcher(isPendingAction, (state) => {
       state.loading = true;
