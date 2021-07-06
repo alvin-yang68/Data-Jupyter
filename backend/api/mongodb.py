@@ -1,10 +1,12 @@
-from flask import Blueprint, request, session
+from flask import Blueprint, request, session, jsonify
+from pathlib import Path
+from bson.json_util import loads
 import jsonpickle
 from io import StringIO
 from contextlib import redirect_stdout
 from copy import deepcopy
 
-from backend import mongo
+from backend import mongo_data
 from .store import Store
 from .utils import load_raw, load_table
 
@@ -12,7 +14,29 @@ from .utils import load_raw, load_table
 mongodb_bp = Blueprint('mongodb_bp', __name__, url_prefix='/mongodb')
 
 
-@mongodb_bp.route('/run', methods=['GET', 'POST'])
+@mongodb_bp.route('/dataset', methods=['GET', 'POST'])
+def dataset():
+    # Return the list of collection names in the database.
+    if request.method == 'GET':
+        return jsonify(mongo_data.db.list_collection_names())
+
+    # Save a new dataset.
+    if request.method == 'POST':
+        # Note that `files` will only contain data if the request had enctype="multipart/form-data".
+        file = request.files['file']
+        content = file.read().decode('utf-8')
+
+        # Stem extension in the filename
+        filename = Path(file.filename).stem
+
+        # Create a new collection or overwrite an existing one with the same name, and
+        # insert the uploaded dataset.
+        mongo_data.db[filename].insert_many(loads(content))
+
+        return filename
+
+
+@mongodb_bp.route('/run', methods=['POST'])
 def run():
     # Parse JSON data from POST request body into Python dictionary.
     request_data = request.get_json()
@@ -33,7 +57,7 @@ def run():
 
     # Create a dictionary containing global variables allowed to be exposed to the notebook cell.
     context = {
-        'col': mongo.db[collection_name],
+        'col': mongo_data.db[collection_name],
         'store': store,
     }
 

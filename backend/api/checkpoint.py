@@ -1,7 +1,7 @@
 from flask import Blueprint, Response, request, session, jsonify
 from bson.objectid import ObjectId
 
-from backend import mongo
+from backend import mongo_user
 from .utils import listify_cursor
 
 # Blueprint Configuration
@@ -11,7 +11,7 @@ checkpoint_bp = Blueprint('checkpoint_bp', __name__, url_prefix='/checkpoint')
 @checkpoint_bp.route('', methods=['GET', 'POST'])
 def checkpoint_list():
     database_model = request.args.get('databaseModel')
-    col = mongo.db['checkpoints']
+    col = mongo_user.db['checkpoints']
 
     # Return the list of checkpoints.
     if request.method == 'GET':
@@ -34,7 +34,7 @@ def checkpoint_list():
 
 @checkpoint_bp.route('/<id>', methods=['GET'])
 def checkpoint_detail(id):
-    col = mongo.db['checkpoints']
+    col = mongo_user.db['checkpoints']
     doc = col.find_one(
         filter={'_id': ObjectId(id)},
         projection={'_id': False, 'name': False}

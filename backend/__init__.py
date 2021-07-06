@@ -5,7 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from .config import Config
 
 # Globally accessible libraries
-mongo = PyMongo()
+mongo_user = PyMongo()
+mongo_data = PyMongo()
 psql = SQLAlchemy()
 
 
@@ -16,7 +17,8 @@ def init_app():
     app.config.from_object(Config)
 
     # Initialize Plugins
-    mongo.init_app(app)
+    mongo_user.init_app(app, uri=app.config['MONGO_USER_URI'])
+    mongo_data.init_app(app, uri=app.config['MONGO_DATA_URI'])
     psql.init_app(app)
 
     with app.app_context():
