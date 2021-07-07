@@ -5,8 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from .config import Config
 
 # Globally accessible libraries
-mongo_user = PyMongo()
-mongo_data = PyMongo()
+mongo_checkpoint = PyMongo()
+mongo_demo = PyMongo()
 psql = SQLAlchemy()
 
 
@@ -17,8 +17,8 @@ def init_app():
     app.config.from_object(Config)
 
     # Initialize Plugins
-    mongo_user.init_app(app, uri=app.config['MONGO_USER_URI'])
-    mongo_data.init_app(app, uri=app.config['MONGO_DATA_URI'])
+    mongo_checkpoint.init_app(app, uri=app.config['MONGO_USER_URI'])
+    mongo_demo.init_app(app, uri=app.config['MONGO_DATA_URI'])
     psql.init_app(app)
 
     with app.app_context():
