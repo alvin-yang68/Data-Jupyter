@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { BrowserMode, DatabaseModel, ModalMode } from '../types';
 import { AppState, dispatch } from '../store';
-import { selectDatabaseModel, performFetchDatasets } from '../slices/notebook';
+import { selectDatabaseModel, performFetchDatasets, clearNotebookSession } from '../slices/notebook';
 import Modal from '../components/Modal';
 import DatasetSelect from '../components/DatasetSelect';
 import Editor from '../components/Editor';
@@ -21,7 +21,12 @@ export default function NotebookView({ databaseModel }: IProps): React.ReactElem
   );
 
   useEffect(() => {
+    // Clear the redux store and flask session context in client cookies on the first
+    // load of `NotebookView`.
+    dispatch(clearNotebookSession());
+
     dispatch(selectDatabaseModel(databaseModel));
+
     dispatch(performFetchDatasets());
   }, []);
 

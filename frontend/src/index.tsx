@@ -11,7 +11,7 @@ ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       {/* Set `forceRefresh` so that redux state will reset on page change */}
-      <BrowserRouter forceRefresh>
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </Provider>

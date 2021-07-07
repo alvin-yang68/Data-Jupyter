@@ -7,6 +7,7 @@ import {
 import { performLoadCheckpoint } from './checkpoint';
 import { DatabaseModel, ModalMode } from '../types';
 import { UploadDatasetPayload, uploadDataset, fetchDatasets } from '../api/dataset';
+import { resetSessionContext } from '../api/notebook';
 
 export type NotebookState = {
   databaseModel: DatabaseModel | null;
@@ -21,6 +22,17 @@ const initialState: NotebookState = {
   selectedDataset: null,
   modalMode: ModalMode.None,
 };
+
+export const clearNotebookSession = createAsyncThunk(
+  'notebook/clearNotebookSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await resetSessionContext();
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
 
 export const performFetchDatasets = createAsyncThunk(
   'notebook/fetchDatasets',

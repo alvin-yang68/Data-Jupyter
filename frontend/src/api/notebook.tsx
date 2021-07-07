@@ -13,3 +13,8 @@ export async function updateBrowser(payload: UpdateBrowserPayload): Promise<Cell
   const response = await client.post(`/api/${databaseModel}/run`, request);
   return response.data;
 }
+
+export async function resetSessionContext(): Promise<void> {
+  const response = await client.get('/api/reset');
+  return response.data;
+}

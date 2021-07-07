@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { updateBrowser } from '../api/browser';
+import { updateBrowser } from '../api/notebook';
 import { Cell } from '../types';
 import { performLoadCheckpoint } from './checkpoint';
 import { NotebookState } from './notebook';
