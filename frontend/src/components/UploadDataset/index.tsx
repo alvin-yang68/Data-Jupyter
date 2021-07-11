@@ -4,7 +4,7 @@ import { DatabaseModel } from '../../types';
 import { dispatch } from '../../store';
 import { performUploadDataset } from '../../slices/notebook';
 import { setError } from '../../slices/status';
-import Select from '../Select';
+import Select from '../generics/Select';
 import UploadFile from './UploadFile';
 
 const acceptedFileMap = {

@@ -89,7 +89,7 @@ export default function TopBar({
   };
 
   return (
-    <div className="px-4 max-w-4xl max-h-screen bg-gray-50 border border-gray-300 rounded-md text-left">
+    <div className="px-4 max-h-screen bg-gray-50 border border-gray-300 rounded-md text-left">
       <div className="flex flex-row justify-between">
         <div className="flex flex-row">
           <svg onClick={handleAddCell} data-tip="Add New Cell" data-for="topButtons" xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-500 hover:text-blue-700 hover:bg-gray-200 m-2 cursor-pointer outline-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">

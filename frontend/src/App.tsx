@@ -13,7 +13,7 @@ import DatasetView from './views/DatasetView';
 
 export default function App(): React.ReactElement {
   return (
-    <div className="h-screen w-screen flex flex-col">
+    <div className="h-screen flex flex-col">
       <NavBar />
 
       <AlertBox />

@@ -16,10 +16,10 @@ export default function RawView(): React.ReactElement {
       theme="monokai"
       readOnly
       fontSize={16}
-      minLines={39}
-      maxLines={39}
+      maxLines={Infinity}
       showPrintMargin={false}
       value={rawData}
+      className="flex-grow"
     />
   ), [rawData]);
 

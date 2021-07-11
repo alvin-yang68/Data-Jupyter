@@ -46,10 +46,10 @@ function Cell({ index, setFocusedCellIndex }: IProps): React.ReactElement {
   if (hasError) leftBorder = 'border-l-4 border-red-500';
 
   return (
-    <div className={`flex flex-col p-2 ${leftBorder} rounded shadow-md relative hover:shadow-lg overflow-hidden`}>
+    <div className={`flex flex-col p-2 ${leftBorder} rounded shadow-md relative hover:shadow-lg focus-within:shadow-lg overflow-hidden`}>
       <div className="flex flex-row justify-between items-start">
         <span className="text-lg mr-4 min-w-max">{`[${execStatus}]: `}</span>
-        <div style={{ width: '93%' }} className={`mt-2 ring-4 ring-gray-400 ${numOfLines <= 5 ? 'focus-within:ring-blue-500' : 'focus-within:ring-yellow-500'} relative`}>
+        <div style={{ width: '96%' }} className={`mt-2 ring-4 ring-gray-400 ${numOfLines <= 5 ? 'focus-within:ring-blue-500' : 'focus-within:ring-yellow-500'} relative`}>
           <AceEditor
             width="100%"
             mode="python"
@@ -65,7 +65,6 @@ function Cell({ index, setFocusedCellIndex }: IProps): React.ReactElement {
           />
         </div>
       </div>
-      {numOfLines > 5 && <span className="mt-2 text-yellow-500 text-right font-bold">Recommended maximum number of lines is 5</span>}
     </div>
   );
 }

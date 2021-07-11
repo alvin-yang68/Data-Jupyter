@@ -1,8 +1,8 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ModalMode } from '../types';
-import { toggleModal } from '../slices/notebook';
+import { ModalMode } from '../../types';
+import { toggleModal } from '../../slices/notebook';
 
 interface IProps {
   title: string;
