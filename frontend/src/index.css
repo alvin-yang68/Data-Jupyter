@@ -31,16 +31,15 @@ tr {
   background: #fff;
 }
 
-th,
 td {
   padding: 6px 13px;
-  border: 1px solid #dfe2e5;
+  border-color: #dfe2e5;
+  border-width: 3px 1px;
 }
 
-table tr:nth-child(2n) {
-  background: #f6f8fa;
+th {
+  padding: 6px 13px;
+  background-color: black;
+  color: white;
 }
 
-li {
-  padding: 8px;
-}

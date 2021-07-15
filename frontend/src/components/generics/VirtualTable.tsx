@@ -1,4 +1,10 @@
-import React, { useContext, useState, useRef, useCallback } from "react";
+import React, {
+  useContext,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { FixedSizeList, FixedSizeListProps } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import BTree from "sorted-btree";
@@ -7,7 +13,6 @@ import { range } from "../../utils";
 
 type VirtualTableState = {
   top: number;
-  setTop: (top: number) => void;
   header: React.ReactNode;
   footer: React.ReactNode;
 };
@@ -15,9 +20,6 @@ type VirtualTableState = {
 /** Context for cross component communication */
 const VirtualTableContext = React.createContext<VirtualTableState>({
   top: 0,
-  setTop: () => {
-    // Do nothing
-  },
   header: <></>,
   footer: <></>,
 });
@@ -76,7 +78,7 @@ export default function VirtualTable<T>({
   // The value is either the item data or `undefined`, which means the item
   // has been loaded (i.e. rendered on screen), but its data has not arrived
   // from the API yet.
-  const [data] = useState<Data<T>>(() => new BTree<number, T | undefined>());
+  const data = useMemo<Data<T>>(() => new BTree<number, T | undefined>(), []);
 
   const isItemLoaded = (index: number): boolean => data.has(index);
 
@@ -110,7 +112,7 @@ export default function VirtualTable<T>({
   );
 
   return (
-    <VirtualTableContext.Provider value={{ top, setTop, header, footer }}>
+    <VirtualTableContext.Provider value={{ top, header, footer }}>
       <InfiniteLoader
         {...rest}
         isItemLoaded={isItemLoaded}
