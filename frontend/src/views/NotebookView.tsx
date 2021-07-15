@@ -1,15 +1,19 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import { BrowserMode, DatabaseModel, ModalMode } from '../types';
-import { AppState, dispatch } from '../store';
-import { selectDatabaseModel, performFetchDatasets, clearNotebookSession } from '../slices/notebook';
-import Modal from '../components/generics/Modal';
-import DatasetSelect from '../components/DatasetSelect';
-import Editor from '../components/Editor';
-import DataBrowser from '../components/DataBrowser';
-import LoadCheckpoint from '../components/LoadCheckpoint';
-import SaveCheckpoint from '../components/SaveCheckpoint';
+import { BrowserMode, DatabaseModel, ModalMode } from "../types";
+import { AppState, dispatch } from "../store";
+import {
+  selectDatabaseModel,
+  performFetchDatasets,
+  clearNotebookSession,
+} from "../slices/notebook";
+import Modal from "../components/generics/Modal";
+import DatasetSelect from "../components/DatasetSelect";
+import Editor from "../components/Editor";
+import DataBrowser from "../components/DataBrowser";
+import LoadCheckpoint from "../components/LoadCheckpoint";
+import SaveCheckpoint from "../components/SaveCheckpoint";
 
 function getModes(databaseModel: DatabaseModel): BrowserMode[] {
   switch (databaseModel) {
@@ -28,9 +32,11 @@ interface IProps {
   databaseModel: DatabaseModel;
 }
 
-export default function NotebookView({ databaseModel }: IProps): React.ReactElement {
+export default function NotebookView({
+  databaseModel,
+}: IProps): React.ReactElement {
   const modalMode = useSelector<AppState, ModalMode>(
-    (state) => state.notebook.modalMode,
+    (state) => state.notebook.modalMode
   );
 
   // Clear the redux store, flask session context in client cookies, set the
@@ -43,17 +49,25 @@ export default function NotebookView({ databaseModel }: IProps): React.ReactElem
   }, []);
 
   if (modalMode === ModalMode.LoadCheckpoint) {
-    return <Modal title="Load Checkpoint"><LoadCheckpoint /></Modal>;
+    return (
+      <Modal title="Load Checkpoint">
+        <LoadCheckpoint />
+      </Modal>
+    );
   }
 
   if (modalMode === ModalMode.SaveCheckpoint) {
-    return <Modal title="Save Checkpoint"><SaveCheckpoint /></Modal>;
+    return (
+      <Modal title="Save Checkpoint">
+        <SaveCheckpoint />
+      </Modal>
+    );
   }
 
   return (
     <div className="h-full container mx-auto pt-16 text-center">
       <h1 className="font-bold text-5xl p-4 border-b-2 border-gray-300">
-        {databaseModel === DatabaseModel.Mongodb ? 'MongoDB' : 'PostgreSQL'}
+        {databaseModel === DatabaseModel.Mongodb ? "MongoDB" : "PostgreSQL"}
       </h1>
 
       <div className="py-4">

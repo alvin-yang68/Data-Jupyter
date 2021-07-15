@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface IProps {
   options: string[];
@@ -6,17 +6,17 @@ interface IProps {
   onChange: (data: string) => void;
 }
 
-export default function Select({ options, value, onChange }: IProps): React.ReactElement {
+export default function Select({
+  options,
+  value,
+  onChange,
+}: IProps): React.ReactElement {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(e.target.value);
   };
 
   const renderOptions = options.map((option) => (
-    <option
-      key={option}
-      value={option}
-      className="ml-2 inline-block"
-    >
+    <option key={option} value={option} className="ml-2 inline-block">
       {option}
     </option>
   ));

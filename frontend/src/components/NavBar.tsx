@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 export default function NavBar(): React.ReactElement {
   return (
@@ -35,9 +35,10 @@ export default function NavBar(): React.ReactElement {
 
         {/* Dataset */}
         <Link to="/dataset">
-          <h1 className="text-blue-200 hover:text-white text-2xl font-bold">Dataset</h1>
+          <h1 className="text-blue-200 hover:text-white text-2xl font-bold">
+            Dataset
+          </h1>
         </Link>
-
       </div>
     </nav>
   );

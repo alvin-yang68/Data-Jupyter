@@ -1,21 +1,21 @@
-import { EditorState } from '../slices/editor';
-import { BrowserState } from '../slices/browser';
+import { EditorState } from "../slices/editor";
+import { BrowserState } from "../slices/browser";
 
 export enum BrowserMode {
-  Raw = 'Raw',
-  Table = 'Table',
-  Console = 'Console',
+  Raw = "Raw",
+  Table = "Table",
+  Console = "Console",
 }
 
 export enum ModalMode {
-  SaveCheckpoint = 'Save Checkpoint',
-  LoadCheckpoint = 'Load Checkpoint',
-  None = 'None',
+  SaveCheckpoint = "Save Checkpoint",
+  LoadCheckpoint = "Load Checkpoint",
+  None = "None",
 }
 
 export enum DatabaseModel {
-  Mongodb = 'mongodb',
-  Psql = 'psql',
+  Mongodb = "mongodb",
+  Psql = "psql",
 }
 
 export interface CellExecutionResult {
@@ -24,6 +24,8 @@ export interface CellExecutionResult {
   console?: string;
   hasCellError: boolean;
   shouldUpdateBrowser: boolean;
+  tableRowCount: number;
+  tableHeaders: string[];
 }
 
 export interface Cell {

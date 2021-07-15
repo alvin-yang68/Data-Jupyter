@@ -1,20 +1,20 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { performLoadCheckpoint } from './checkpoint';
-import { DatabaseModel, ModalMode } from '../types';
-import { UploadDatasetPayload, uploadDataset, fetchDatasets } from '../api/dataset';
-import { resetSessionContext } from '../api/notebook';
+import { performLoadCheckpoint } from "./checkpoint";
+import { DatabaseModel, ModalMode } from "../types";
+import {
+  UploadDatasetPayload,
+  uploadDataset,
+  fetchDatasets,
+} from "../api/dataset";
+import { resetSessionContext } from "../api/notebook";
 
 export type NotebookState = {
   databaseModel: DatabaseModel | null;
   datasets: string[];
   selectedDataset: string | null;
   modalMode: ModalMode;
-}
+};
 
 const initialState: NotebookState = {
   databaseModel: null,
@@ -24,55 +24,69 @@ const initialState: NotebookState = {
 };
 
 export const clearNotebookSession = createAsyncThunk(
-  'notebook/clearNotebookSession',
+  "notebook/clearNotebookSession",
   async (_, { rejectWithValue }) => {
     try {
       return await resetSessionContext();
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const performFetchDatasets = createAsyncThunk(
-  'notebook/fetchDatasets',
+  "notebook/fetchDatasets",
   async (_, { getState, rejectWithValue }) => {
-    const { notebook: { databaseModel } } = getState() as {notebook: {databaseModel: DatabaseModel | null}};
+    const {
+      notebook: { databaseModel },
+    } = getState() as { notebook: { databaseModel: DatabaseModel | null } };
 
-    if (!databaseModel) return rejectWithValue('Unable to fetch datasets. No database model selected');
+    if (!databaseModel)
+      return rejectWithValue(
+        "Unable to fetch datasets. No database model selected"
+      );
 
     try {
       return await fetchDatasets(databaseModel);
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const performUploadDataset = createAsyncThunk(
-  'notebook/uploadDataset',
+  "notebook/uploadDataset",
   async (payload: UploadDatasetPayload, { rejectWithValue }) => {
     try {
       return await uploadDataset(payload);
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const notebookSlice = createSlice({
-  name: 'notebook',
+  name: "notebook",
   initialState,
   reducers: {
-    selectDatabaseModel: (state: NotebookState, { payload }: PayloadAction<DatabaseModel | null>) => {
+    selectDatabaseModel: (
+      state: NotebookState,
+      { payload }: PayloadAction<DatabaseModel | null>
+    ) => {
       state.databaseModel = payload;
     },
 
-    selectDataset: (state: NotebookState, { payload }: PayloadAction<string>) => {
+    selectDataset: (
+      state: NotebookState,
+      { payload }: PayloadAction<string>
+    ) => {
       state.selectedDataset = payload;
     },
 
-    toggleModal: (state: NotebookState, { payload }: PayloadAction<ModalMode>) => {
+    toggleModal: (
+      state: NotebookState,
+      { payload }: PayloadAction<ModalMode>
+    ) => {
       state.modalMode = payload;
     },
   },
@@ -91,8 +105,5 @@ export const notebookSlice = createSlice({
   },
 });
 
-export const {
-  selectDatabaseModel,
-  selectDataset,
-  toggleModal,
-} = notebookSlice.actions;
+export const { selectDatabaseModel, selectDataset, toggleModal } =
+  notebookSlice.actions;

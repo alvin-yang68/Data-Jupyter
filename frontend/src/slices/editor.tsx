@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { updateBrowser } from '../api/notebook';
-import { Cell } from '../types';
-import { performLoadCheckpoint } from './checkpoint';
-import { NotebookState } from './notebook';
+import { runCell } from "../api/notebook";
+import { Cell } from "../types";
+import { performLoadCheckpoint } from "./checkpoint";
+import { NotebookState } from "./notebook";
 
 export type EditorState = {
   cells: Cell[];
@@ -11,7 +11,7 @@ export type EditorState = {
   execCounter: number;
   lastExecutedCellId: number | null;
   updateBrowserCellId: number | null;
-}
+};
 
 const initialState: EditorState = {
   cells: [],
@@ -22,18 +22,22 @@ const initialState: EditorState = {
 };
 
 export const performRunCell = createAsyncThunk(
-  'editor/runCell',
+  "editor/runCell",
   async (index: number, { getState, rejectWithValue }) => {
-    const { notebook, editor } = getState() as {notebook: NotebookState, editor: EditorState};
+    const { notebook, editor } = getState() as {
+      notebook: NotebookState;
+      editor: EditorState;
+    };
 
-    if (index > editor.cells.length) return rejectWithValue('Invalid cell');
+    if (index > editor.cells.length) return rejectWithValue("Invalid cell");
 
-    if (!notebook.selectedDataset) return rejectWithValue('No dataset selected');
+    if (!notebook.selectedDataset)
+      return rejectWithValue("No dataset selected");
 
     const targetCell = editor.cells[index];
 
     try {
-      return await updateBrowser({
+      return await runCell({
         databaseModel: notebook.databaseModel,
         selectedDataset: notebook.selectedDataset,
         editorContent: targetCell.editorContent,
@@ -41,21 +45,24 @@ export const performRunCell = createAsyncThunk(
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const editorSlice = createSlice({
-  name: 'editor',
+  name: "editor",
   initialState,
   reducers: {
-    addCell: (state: EditorState, { payload }: PayloadAction<number | null>) => {
+    addCell: (
+      state: EditorState,
+      { payload }: PayloadAction<number | null>
+    ) => {
       state.cellCounter += 1;
 
       const newCell = {
         id: state.cellCounter,
-        execStatus: ' ',
+        execStatus: " ",
         errorStatus: false,
-        editorContent: '',
+        editorContent: "",
         numOfLines: 0,
       };
 
@@ -68,12 +75,20 @@ export const editorSlice = createSlice({
       }
     },
 
-    changeCell: (state: EditorState, { payload: { index, value } }: PayloadAction<{index: number, value: string}>) => {
-      state.cells[index].numOfLines = value.split('\n').length;
+    changeCell: (
+      state: EditorState,
+      {
+        payload: { index, value },
+      }: PayloadAction<{ index: number; value: string }>
+    ) => {
+      state.cells[index].numOfLines = value.split("\n").length;
       state.cells[index].editorContent = value;
     },
 
-    deleteCell: (state: EditorState, { payload }: PayloadAction<number | null>) => {
+    deleteCell: (
+      state: EditorState,
+      { payload }: PayloadAction<number | null>
+    ) => {
       if (payload !== null) {
         // Remove focused cell.
         state.cells.splice(payload, 1);
@@ -83,7 +98,12 @@ export const editorSlice = createSlice({
       }
     },
 
-    swapCell: (state: EditorState, { payload: { focusedCellIndex, step } }: PayloadAction<{focusedCellIndex: number, step: number}>) => {
+    swapCell: (
+      state: EditorState,
+      {
+        payload: { focusedCellIndex, step },
+      }: PayloadAction<{ focusedCellIndex: number; step: number }>
+    ) => {
       const from = focusedCellIndex;
       const to = from + step;
 
@@ -100,7 +120,7 @@ export const editorSlice = createSlice({
       const targetCellIndex = action.meta.arg;
       const targetCell = state.cells[targetCellIndex];
 
-      targetCell.execStatus = '*';
+      targetCell.execStatus = "*";
       targetCell.errorStatus = false;
     });
 
@@ -113,25 +133,24 @@ export const editorSlice = createSlice({
       targetCell.execStatus = state.execCounter;
       targetCell.errorStatus = action.payload.hasCellError;
       state.lastExecutedCellId = targetCell.id;
-      if (action.payload.shouldUpdateBrowser) state.updateBrowserCellId = targetCell.id;
+      if (action.payload.shouldUpdateBrowser)
+        state.updateBrowserCellId = targetCell.id;
     });
 
     builder.addCase(performRunCell.rejected, (state, action) => {
       const targetCellIndex = action.meta.arg;
       const targetCell = state.cells[targetCellIndex];
 
-      targetCell.execStatus = ' ';
+      targetCell.execStatus = " ";
       targetCell.errorStatus = true;
     });
 
-    builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.editorState);
+    builder.addCase(
+      performLoadCheckpoint.fulfilled,
+      (state, action) => action.payload.editorState
+    );
   },
 });
 
-export const {
-  addCell,
-  changeCell,
-  deleteCell,
-  swapCell,
-  loadCells,
-} = editorSlice.actions;
+export const { addCell, changeCell, deleteCell, swapCell, loadCells } =
+  editorSlice.actions;

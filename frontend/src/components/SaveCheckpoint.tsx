@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { dispatch } from '../store';
-import { ModalMode } from '../types';
-import { performSaveCheckpoint } from '../slices/checkpoint';
-import { toggleModal } from '../slices/notebook';
+import { dispatch } from "../store";
+import { ModalMode } from "../types";
+import { performSaveCheckpoint } from "../slices/checkpoint";
+import { toggleModal } from "../slices/notebook";
 
 export default function SaveCheckpoint(): React.ReactElement {
-  const [checkpointName, setCheckpointName] = useState<string>('');
+  const [checkpointName, setCheckpointName] = useState<string>("");
 
   const timestamp = new Date().toLocaleString();
 
@@ -14,7 +14,7 @@ export default function SaveCheckpoint(): React.ReactElement {
     e.preventDefault();
 
     // If no name provided, then defaults to the current timestamp
-    if (checkpointName === '') setCheckpointName(timestamp);
+    if (checkpointName === "") setCheckpointName(timestamp);
 
     dispatch(performSaveCheckpoint(checkpointName));
     dispatch(toggleModal(ModalMode.None));
@@ -38,7 +38,6 @@ export default function SaveCheckpoint(): React.ReactElement {
             className="button-reliefpx-8 rounded-r-lg bg-blue-700  text-white font-bold p-4 uppercase border-blue-800 border-t border-b border-r"
           >
             Save
-
           </button>
         </div>
       </form>

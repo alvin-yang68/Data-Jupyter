@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import UploadDataset from '../components/UploadDataset';
+import UploadDataset from "../components/UploadDataset";
 
 export default function DatasetView(): React.ReactElement {
   return (

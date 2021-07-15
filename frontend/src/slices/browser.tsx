@@ -1,22 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
-import { performRunCell } from './editor';
-import { performLoadCheckpoint } from './checkpoint';
+import { performRunCell } from "./editor";
+import { performLoadCheckpoint } from "./checkpoint";
 
 export type BrowserState = {
   raw: string;
   table: string;
   console: string;
-}
+  tableRowCount: number;
+  tableHeaders: string[];
+};
 
 const initialState: BrowserState = {
-  raw: '',
-  table: '',
-  console: '',
+  raw: "",
+  table: "",
+  console: "",
+  tableRowCount: 0,
+  tableHeaders: [],
 };
 
 export const browserSlice = createSlice({
-  name: 'browser',
+  name: "browser",
   initialState: initialState as BrowserState,
   reducers: {},
   extraReducers: (builder) => {
@@ -25,6 +29,9 @@ export const browserSlice = createSlice({
       return { ...state, ...results };
     });
 
-    builder.addCase(performLoadCheckpoint.fulfilled, (state, action) => action.payload.browserState);
+    builder.addCase(
+      performLoadCheckpoint.fulfilled,
+      (state, action) => action.payload.browserState
+    );
   },
 });

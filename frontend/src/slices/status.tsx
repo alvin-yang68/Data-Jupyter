@@ -3,15 +3,15 @@ import {
   AnyAction,
   AsyncThunk,
   createSlice,
-} from '@reduxjs/toolkit';
+} from "@reduxjs/toolkit";
 
-import { performUploadDataset } from './notebook';
+import { performUploadDataset } from "./notebook";
 
 export type StatusState = {
   loading: boolean;
-  success: {timestamp: number, message: string} | null;
-  error: {timestamp: number, message: string} | null;
-}
+  success: { timestamp: number; message: string } | null;
+  error: { timestamp: number; message: string } | null;
+};
 
 const initialState: StatusState = {
   loading: false,
@@ -22,27 +22,30 @@ const initialState: StatusState = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>;
 
-type PendingAction = ReturnType<GenericAsyncThunk['pending']>;
-type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>;
-type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>;
+type PendingAction = ReturnType<GenericAsyncThunk["pending"]>;
+type FulfilledAction = ReturnType<GenericAsyncThunk["fulfilled"]>;
+type RejectedAction = ReturnType<GenericAsyncThunk["rejected"]>;
 
 function isPendingAction(action: AnyAction): action is PendingAction {
-  return action.type.endsWith('/pending');
+  return action.type.endsWith("/pending");
 }
 
 function isFulfilledAction(action: AnyAction): action is FulfilledAction {
-  return action.type.endsWith('/fulfilled');
+  return action.type.endsWith("/fulfilled");
 }
 
 function isRejectedAction(action: AnyAction): action is RejectedAction {
-  return action.type.endsWith('/rejected');
+  return action.type.endsWith("/rejected");
 }
 
 export const statusSlice = createSlice({
-  name: 'app',
+  name: "app",
   initialState,
   reducers: {
-    setError: (state: StatusState, { payload }: PayloadAction<string | null>) => {
+    setError: (
+      state: StatusState,
+      { payload }: PayloadAction<string | null>
+    ) => {
       if (payload) {
         state.error = { timestamp: Date.now(), message: payload };
         state.success = null;
@@ -51,7 +54,10 @@ export const statusSlice = createSlice({
       }
     },
 
-    setSuccess: (state: StatusState, { payload }: PayloadAction<string | null>) => {
+    setSuccess: (
+      state: StatusState,
+      { payload }: PayloadAction<string | null>
+    ) => {
       if (payload) {
         state.success = { timestamp: Date.now(), message: payload };
         state.error = null;
@@ -62,7 +68,10 @@ export const statusSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(performUploadDataset.fulfilled, (state) => {
-      state.success = { timestamp: Date.now(), message: 'Successfully uploaded dataset' };
+      state.success = {
+        timestamp: Date.now(),
+        message: "Successfully uploaded dataset",
+      };
     });
 
     // Match any action that has type ending with '/pending'
@@ -82,7 +91,8 @@ export const statusSlice = createSlice({
       state.loading = false;
       state.success = null;
 
-      const errorMessage: string | undefined = action.payload as string | undefined || action.error.message;
+      const errorMessage: string | undefined =
+        (action.payload as string | undefined) || action.error.message;
 
       if (errorMessage) {
         state.error = { timestamp: Date.now(), message: errorMessage };
@@ -93,7 +103,4 @@ export const statusSlice = createSlice({
   },
 });
 
-export const {
-  setError,
-  setSuccess,
-} = statusSlice.actions;
+export const { setError, setSuccess } = statusSlice.actions;

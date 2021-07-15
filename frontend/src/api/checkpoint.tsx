@@ -1,16 +1,20 @@
-import client from './index';
+import client from "./index";
 
-import { Checkpoint, CheckpointMeta } from '../types';
+import { Checkpoint, CheckpointMeta } from "../types";
 
-export async function fetchCheckpoints(databaseModel: string): Promise<CheckpointMeta[]> {
-  const response = await client.get(`/api/checkpoint?databaseModel=${databaseModel}`);
+export async function fetchCheckpoints(
+  databaseModel: string
+): Promise<CheckpointMeta[]> {
+  const response = await client.get(
+    `/api/checkpoint?databaseModel=${databaseModel}`
+  );
   return response.data;
 }
 
 export async function saveCheckpoint(payload: Checkpoint): Promise<void> {
   const response = await client.post(
     `/api/checkpoint?databaseModel=${payload.databaseModel}`,
-    payload,
+    payload
   );
   return response.data;
 }

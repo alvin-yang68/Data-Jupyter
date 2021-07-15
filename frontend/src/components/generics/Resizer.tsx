@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface IProps {
   onResize: (deltaX: number, deltaY: number) => void;
@@ -40,21 +40,21 @@ export default function Resizer({
 
   useEffect(() => {
     if (isMouseDown) {
-      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener("mousemove", handleMouseMove);
     }
 
     return () => {
       // Will clean-up every time before the callback of `useEffect()` is called
       // again (e.g. when a dependency changed) or when component is destroyed.
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isMouseDown, onResize]);
 
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
 

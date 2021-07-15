@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { DatabaseModel } from '../../types';
-import { dispatch } from '../../store';
-import { performUploadDataset } from '../../slices/notebook';
-import { setError } from '../../slices/status';
-import Select from '../generics/Select';
-import UploadFile from './UploadFile';
+import { DatabaseModel } from "../../types";
+import { dispatch } from "../../store";
+import { performUploadDataset } from "../../slices/notebook";
+import { setError } from "../../slices/status";
+import Select from "../generics/Select";
+import UploadFile from "./UploadFile";
 
 const acceptedFileMap = {
-  [DatabaseModel.Mongodb]: '.txt',
-  [DatabaseModel.Psql]: '.csv',
+  [DatabaseModel.Mongodb]: ".txt",
+  [DatabaseModel.Psql]: ".csv",
 };
 
 export default function UploadDataset(): React.ReactElement {
-  const [databaseModel, setDatabaseModel] = useState<DatabaseModel>(DatabaseModel.Mongodb);
+  const [databaseModel, setDatabaseModel] = useState<DatabaseModel>(
+    DatabaseModel.Mongodb
+  );
 
   const [file, setFile] = useState<File | null>(null);
 
@@ -29,22 +31,23 @@ export default function UploadDataset(): React.ReactElement {
     e.preventDefault();
 
     if (!databaseModel) {
-      dispatch(setError('No database model selected'));
+      dispatch(setError("No database model selected"));
       return;
     }
 
     if (!file) {
-      dispatch(setError('No file to upload'));
+      dispatch(setError("No file to upload"));
       return;
     }
 
     // Attach file to a `FormData`, which sets an encoding type of "multipart/form-data"
     // on the HTTP response.
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
-    dispatch(performUploadDataset({ databaseModel, formData }))
-      .then(() => setFile(null));
+    dispatch(performUploadDataset({ databaseModel, formData })).then(() =>
+      setFile(null)
+    );
   };
 
   return (
@@ -67,7 +70,11 @@ export default function UploadDataset(): React.ReactElement {
         accept={acceptedFileMap[databaseModel]}
       />
 
-      <input type="submit" value="Upload" className="cursor-pointer button-relief" />
+      <input
+        type="submit"
+        value="Upload"
+        className="cursor-pointer button-relief"
+      />
     </form>
   );
 }

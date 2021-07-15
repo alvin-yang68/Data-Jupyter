@@ -1,15 +1,12 @@
-import React from 'react';
-import {
-  Switch,
-  Route,
-} from 'react-router-dom';
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 
-import { DatabaseModel } from './types';
-import NavBar from './components/NavBar';
-import AlertBox from './components/AlertBox';
-import HomeView from './views/HomeView';
-import NotebookView from './views/NotebookView';
-import DatasetView from './views/DatasetView';
+import { DatabaseModel } from "./types";
+import NavBar from "./components/NavBar";
+import AlertBox from "./components/AlertBox";
+import HomeView from "./views/HomeView";
+import NotebookView from "./views/NotebookView";
+import DatasetView from "./views/DatasetView";
 
 export default function App(): React.ReactElement {
   return (
@@ -20,7 +17,7 @@ export default function App(): React.ReactElement {
 
       <main className="mt-16">
         <Switch>
-          <Route exact path={['/', '/index']}>
+          <Route exact path={["/", "/index"]}>
             <HomeView />
           </Route>
 

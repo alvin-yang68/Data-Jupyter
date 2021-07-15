@@ -1,22 +1,26 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { fetchCheckpoints, loadCheckpoint, saveCheckpoint } from '../api/checkpoint';
-import { CheckpointMeta } from '../types';
-import { BrowserState } from './browser';
-import { EditorState } from './editor';
-import { NotebookState } from './notebook';
+import {
+  fetchCheckpoints,
+  loadCheckpoint,
+  saveCheckpoint,
+} from "../api/checkpoint";
+import { CheckpointMeta } from "../types";
+import { BrowserState } from "./browser";
+import { EditorState } from "./editor";
+import { NotebookState } from "./notebook";
 
 export type CheckpointState = CheckpointMeta[];
 
 const initialState: CheckpointState = [];
 
 export const performFetchCheckpoints = createAsyncThunk(
-  'checkpoint/fetch',
+  "checkpoint/fetch",
   async (_, { getState, rejectWithValue }) => {
-    const { notebook } = getState() as {notebook: NotebookState};
+    const { notebook } = getState() as { notebook: NotebookState };
 
     if (!notebook.databaseModel) {
-      return rejectWithValue('Rejected');
+      return rejectWithValue("Rejected");
     }
 
     try {
@@ -24,16 +28,24 @@ export const performFetchCheckpoints = createAsyncThunk(
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const performSaveCheckpoint = createAsyncThunk(
-  'checkpoint/save',
+  "checkpoint/save",
   async (name: string, { getState, rejectWithValue }) => {
-    const { editor, notebook, browser } = getState() as {editor: EditorState, notebook: NotebookState, browser: BrowserState};
+    const { editor, notebook, browser } = getState() as {
+      editor: EditorState;
+      notebook: NotebookState;
+      browser: BrowserState;
+    };
 
-    if (!notebook.selectedDataset || !notebook.databaseModel || browser === null) {
-      return rejectWithValue('Rejected');
+    if (
+      !notebook.selectedDataset ||
+      !notebook.databaseModel ||
+      browser === null
+    ) {
+      return rejectWithValue("Rejected");
     }
 
     try {
@@ -47,25 +59,28 @@ export const performSaveCheckpoint = createAsyncThunk(
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const performLoadCheckpoint = createAsyncThunk(
-  'checkpoint/load',
+  "checkpoint/load",
   async (id: string, { rejectWithValue }) => {
     try {
       return await loadCheckpoint(id);
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
-  },
+  }
 );
 
 export const checkpointSlice = createSlice({
-  name: 'checkpoint',
+  name: "checkpoint",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(performFetchCheckpoints.fulfilled, (state, action) => action.payload);
+    builder.addCase(
+      performFetchCheckpoints.fulfilled,
+      (state, action) => action.payload
+    );
   },
 });
